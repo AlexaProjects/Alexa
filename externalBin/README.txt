@@ -33,8 +33,11 @@ Alexa is released under GPL v3.0 license.
 
 OpenCV is licensed under the terms of the BSD License.
 More details on the project page: http://opencv.willowgarage.com/wiki/
+You can find the license of the version that is used by Alexa here:
+http://www.alan-pipitone.com/alexa/docs/license/license_OpenCv.txt
 
 Tesseract is licensed under the Apache License 2.0 license.
+You can find the license here: http://www.apache.org/licenses/LICENSE-2.0
 More details on the project page: http://code.google.com/p/tesseract-ocr/
 
 OpenCV BSD License and Apache License 2.0 are compatible with the General Public License Version 3.
