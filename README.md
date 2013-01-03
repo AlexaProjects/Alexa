@@ -13,4 +13,4 @@ You can monitor the user experience of applications published via Citrix, you ca
 
 To understand how Alexa works and how to configure and train it, please read the official documentation: http://www.alan-pipitone.com/alexa/docs/
 
-Alexa is developed and maintained by Alan Pipitone.
+Alexa is released under GPL v3.0 license and it is developed and maintained by Alan Pipitone.
