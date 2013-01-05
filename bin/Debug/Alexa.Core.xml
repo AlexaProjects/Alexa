@@ -71,7 +71,7 @@ Find all chars in the Alexa Core source image.
             <param name="maxWidth">max word width</param>
             <returns> Returns all words found</returns>
         </member>
-        <member name="M:Alexa.Core.GetCharsV2(System.Int32,System.Int32)">
+        <member name="M:Alexa.Core.GetCharsV2(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
 Find all chars in the Alexa Core source image.
 </summary>
@@ -79,7 +79,7 @@ Find all chars in the Alexa Core source image.
             <param name="spaceThickness">space thickness</param>
             <returns> Returns all chars found</returns>
         </member>
-        <member name="M:Alexa.Core.GetChars(System.Int32,System.Int32)">
+        <member name="M:Alexa.Core.GetChars(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
 Find all chars in the Alexa Core source image.
 </summary>

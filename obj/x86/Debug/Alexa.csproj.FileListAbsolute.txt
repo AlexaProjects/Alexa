@@ -24,11 +24,11 @@ C:\work\progetti visual studio 2010\Alexa\obj\x86\Debug\Alexa.pdb
 C:\work\progetti visual studio 2010\Alexa\bin\Debug\Alexa.Core.xml
 C:\work\progetti visual studio 2010\Alexa\bin\Debug\libtesseract.dll
 C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Alexa.exe.config
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Alexa.XML
 C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Interop.AutoItX3Lib.dll
 C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Alexa.csproj.ResolveComReference.cache
 C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Alexa.exe
 C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Alexa.pdb
-C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Alexa.XML
 C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Alexa.exe
 C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Alexa.pdb
 C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Alexa.Core.dll

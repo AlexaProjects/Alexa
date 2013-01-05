@@ -86,10 +86,13 @@ namespace Alexa.Utilities
                 //declare the global node (and its child node) that will be written to the output file
                 XmlElement global = outputFile.CreateElement("global");
                 XmlElement globalPerformance = outputFile.CreateElement("performance");
-                globalPerformance.SetAttribute("start", DateTimeToUnixTimestamp(Global.startTime).ToString());
-                globalPerformance.SetAttribute("end", DateTimeToUnixTimestamp(Global.endTime).ToString());
+                //globalPerformance.SetAttribute("start", DateTimeToUnixTimestamp(Global.startTime).ToString());d_MM_yyyy_HH.mm.ss
+                globalPerformance.SetAttribute("start", Global.startTime.ToString("HH:mm:ss"));
+                //globalPerformance.SetAttribute("end", DateTimeToUnixTimestamp(Global.endTime).ToString());
+                globalPerformance.SetAttribute("end", Global.endTime.ToString("HH:mm:ss"));
                 globalPerformance.SetAttribute("duration", Global.duration.ToString());
-
+                XmlElement globalDate = outputFile.CreateElement("date");
+                globalDate.InnerText = Global.startTime.ToString("dd/MM/yyyy");
                 //set the exit code of the global node
                 XmlElement globalExitcode = outputFile.CreateElement("exitcode");
                 globalExitcode.InnerText = "0";
@@ -202,6 +205,7 @@ namespace Alexa.Utilities
                 nagiosPerformance = nagiosPerformance + ";;";
 
                 //put together global node and global child nodes
+                global.AppendChild(globalDate);
                 global.AppendChild(globalPerformance);
                 global.AppendChild(globalExitcode);
                 xRoot.AppendChild(global);
@@ -231,8 +235,8 @@ namespace Alexa.Utilities
                     XmlElement exitcode = outputFile.CreateElement("exitcode");
                     long duration = stepTiming.stepDuration;
 
-                    performance.SetAttribute("start", DateTimeToUnixTimestamp(stepTiming.startTime).ToString());
-                    performance.SetAttribute("end", DateTimeToUnixTimestamp(stepTiming.endTime).ToString());
+                    performance.SetAttribute("start", stepTiming.startTime.ToString("HH:mm:ss"));
+                    performance.SetAttribute("end", stepTiming.endTime.ToString("HH:mm:ss"));
                     performance.SetAttribute("duration", duration.ToString());
 
                     //set the exit code of the step

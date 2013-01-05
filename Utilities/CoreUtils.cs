@@ -158,13 +158,15 @@ namespace Alexa.Utilities
         static private int _cropRectHeight = -1;
         static private int _cropRectWidth = -1;
 
-        //word size properties
-        static private int _minHeight = 6;
-        static private int _maxHeight = 50;
-        static private int _minWidth = 50;
-        static private int _maxWidth = 300;
-        static private int _lineThickness = 2;
-        static private int _spaceThickness = 2;
+        //word properties
+        static private int _charRectMinHeight = 6;
+        static private int _charRectMaxHeight = 50;
+        static private int _charRectMinWidth = 50;
+        static private int _charRectMaxWidth = 300;
+        static private int _charRectThickness = 2;
+        static private int _charRectExtendLeft = 2;
+        //r,g,b
+        static private int[] _charRectColor = {255, 0, 0};
 
         static private bool _performanceEnable = false;
 
@@ -2265,13 +2267,13 @@ namespace Alexa.Utilities
 
                 if (_binarizeImage)
                 {
-                    chars = _core.GetChars(_lineThickness, _spaceThickness);
-                    words = _core.GetWords(_minHeight, _maxHeight, _minWidth, _maxWidth);
+                    chars = _core.GetChars(_charRectThickness, _charRectExtendLeft, _charRectColor[0], _charRectColor[1], _charRectColor[2]);
+                    words = _core.GetWords(_charRectMinHeight, _charRectMaxHeight, _charRectMinWidth, _charRectMaxWidth);
                 }
                 else
                 {
-                    chars = _core.GetCharsV2(_lineThickness, _spaceThickness);
-                    words = _core.GetWordsV2(_minHeight, _maxHeight, _minWidth, _maxWidth);
+                    chars = _core.GetCharsV2(_charRectThickness, _charRectExtendLeft, _charRectColor[0], _charRectColor[1], _charRectColor[2]);
+                    words = _core.GetWordsV2(_charRectMinHeight, _charRectMaxHeight, _charRectMinWidth, _charRectMaxWidth);
                 }
 
                 words.Reverse();
@@ -3019,13 +3021,15 @@ namespace Alexa.Utilities
             _cropRectHeight = -1;
             _cropRectWidth = -1;
 
-            //word size properties
-            _minHeight = 6;
-            _maxHeight = 50;
-            _minWidth = 50;
-            _maxWidth = 300;
-            _lineThickness = 2;
-            _spaceThickness = 2;
+            //char bounding rect properties
+            _charRectMinHeight = 6;
+            _charRectMaxHeight = 50;
+            _charRectMinWidth = 50;
+            _charRectMaxWidth = 300;
+            _charRectThickness = 2;
+            _charRectExtendLeft = 2;
+            _charRectColor[0] = 255;
+            _charRectColor[1] = _charRectColor[2] = 0;
 
             //word text
             _textValue = "";
@@ -3202,24 +3206,38 @@ namespace Alexa.Utilities
             try
             {
                 //they are not a mandatory options
-                _lineThickness = Int32.Parse(alexaStep.Attributes["line.thickness"].Value);
+                _charRectThickness = Int32.Parse(alexaStep.Attributes["rectbound.thickness"].Value);
             }
             catch { }
 
             try
             {
                 //they are not a mandatory options
-                _spaceThickness = Int32.Parse(alexaStep.Attributes["space.thickness"].Value);
+                _charRectExtendLeft = Int32.Parse(alexaStep.Attributes["rectbound.extend.left"].Value);
             }
             catch { }
 
             try
             {
                 //they are not a mandatory options
-                _minHeight = Int32.Parse(alexaStep.Attributes["min.height"].Value);
-                _maxHeight = Int32.Parse(alexaStep.Attributes["max.height"].Value) + (_lineThickness * 2);
-                _minWidth = Int32.Parse(alexaStep.Attributes["min.width"].Value);
-                _maxWidth = Int32.Parse(alexaStep.Attributes["max.width"].Value) + (_lineThickness * 2);
+                _charRectMinHeight = Int32.Parse(alexaStep.Attributes["rectbound.min.height"].Value);
+                _charRectMaxHeight = Int32.Parse(alexaStep.Attributes["rectbound.max.height"].Value) + (_charRectThickness * 2);
+                _charRectMinWidth = Int32.Parse(alexaStep.Attributes["rectbound.min.width"].Value);
+                _charRectMaxWidth = Int32.Parse(alexaStep.Attributes["rectbound.max.width"].Value) + (_charRectThickness * 2);
+            }
+            catch { }
+
+            try
+            {
+                string rectColor = alexaStep.Attributes["rectbound.color"].Value.Replace(" ", "");
+                rectColor = rectColor.Replace("(", "");
+                rectColor = rectColor.Replace(")", "");
+
+                string[] colorArr = rectColor.Split(',');
+
+                _charRectColor[0] = Int32.Parse(colorArr[0]);
+                _charRectColor[1] = Int32.Parse(colorArr[1]);
+                _charRectColor[2] = Int32.Parse(colorArr[2]);
             }
             catch { }
 
@@ -3341,7 +3359,7 @@ namespace Alexa.Utilities
 
             #region handle configuration error
             //write the error
-            if (_textToInsert == "" && stepType == StepType.InteractInputBox)
+            if (_textToInsert == "" && stepType == StepType.InteractInputBox && _mouseClick == true && _mouseMove == true)
             {
                 LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Error, "You have to add the node \"insert\" on a \"interact\" step with \"inputbox\" as bind value. The step is " + GetStepNameNumber(alexaStep));
                 Program.Finish(true);
@@ -3370,7 +3388,7 @@ namespace Alexa.Utilities
             }
 
             //write the error
-            if (_textToInsert == "" && stepType == StepType.InteractInputBox)
+            if (_textValue == "" && stepType == StepType.InteractText)
             {
                 LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Error, "You have to add the node \"text\" on a \"interact\" step with \"word\" as bind value. The step is " + GetStepNameNumber(alexaStep));
                 Program.Finish(true);
