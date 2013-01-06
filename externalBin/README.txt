@@ -1,16 +1,12 @@
 This folder contains all the references that you have to add in Visual Studio.
 
 
-You have to add Alexa.Core.dll and libtesseract.dll as references
+You have to add libtesseract.dll
 
 
 libtesseract.dll is the reference that you need to use Tesseract OCR with the Framework .NET
 I download it from here: https://github.com/charlesw/tesseract-ocr-dotnet
 The home page of Tesseract project is: http://code.google.com/p/tesseract-ocr/
-
-
-Alexa.Core.dll is the core of Alexa. It allows you to use the core functions.
-You can download the source code from here: https://github.com/AlexaProjects/Alexa.Core
 
 
 The folder OpenCV contains all files that allow you to use OpenCV functions, you should add
@@ -29,7 +25,7 @@ You have to install also the Microsoft Visual C++ 2010 Redistributable Package (
 You need it (the x86 version) also on a 64 bit machine.
 
 
-Alexa is released under GPL v3.0 license.
+Al'exa is released under GPL v3.0 license.
 
 OpenCV is licensed under the terms of the BSD License.
 More details on the project page: http://opencv.willowgarage.com/wiki/
@@ -42,6 +38,6 @@ OpenCV BSD License and Apache License 2.0 are compatible with the General Public
 Ragarding Microsoft Framework .NET, Microsoft Visual C++ 2010 Redistributable Package and
 AutoIT, the General Public License Version 3 considers them as System Libraries and/or compiler
 used to produce the work and/or an object code interpreter. So they are not to be considered
-part of Alexa source code or binaries.
+part of Al'exa source code or binaries.
 
-You can find more details about Alexa here: http://www.alan-pipitone.com/alexa/docs/
+You can find more details about Al'exa here: http://www.alan-pipitone.com/alexa/docs/

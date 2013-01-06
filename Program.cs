@@ -1,18 +1,18 @@
 ﻿/*  
 Copyright (C) 2013 Alan Pipitone
     
-Alexa is free software: you can redistribute it and/or modify
+Al'exa is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Alexa is distributed in the hope that it will be useful,
+Al'exa is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Alexa.  If not, see <http://www.gnu.org/licenses/>.
+along with Al'exa.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
@@ -34,15 +34,15 @@ namespace Alexa
         //stores the regular expression containing the name of processes to kill
         static private string _processToKillRegEx = "";
         
-        //stores the elapsed time of Alexa execution time
+        //stores the elapsed time of Al'exa execution time
         static private Stopwatch _globalTime = new Stopwatch();
 
-        //contains all pid of the processes started before Alexa
+        //contains all pid of the processes started before Al'exa
         static private List<UInt32> processesBeforeAlexa;
-        //contains all pid of the processes started after the execution of Alexa
+        //contains all pid of the processes started after the execution of Al'exa
         static private List<UInt32> processesAfterAlexa;
 
-        //contain user name and user domain of the account used to run Alexa
+        //contain user name and user domain of the account used to run Al'exa
         private static string userName;
         private static string userDomain;
 
@@ -63,7 +63,7 @@ namespace Alexa
             IntPtr windowHandle = Process.GetCurrentProcess().MainWindowHandle;
             SystemUtils.User32.HideWindow(windowHandle);
 
-            //get user name and user domain of the account used to run Alexa
+            //get user name and user domain of the account used to run Al'exa
             userName = Environment.UserName;
             userDomain = Environment.UserDomainName;
 
@@ -87,7 +87,7 @@ namespace Alexa
             //save the start time, this will be saved in the xml output file
             //into the global node
             OutputUtils.Global.startTime = DateTime.Now;
-            //start the stopwatch that measure the elapsed time of all Alexa steps and computer vision time
+            //start the stopwatch that measure the elapsed time of all Al'exa steps and computer vision time
             _globalTime.Start();
 
             //start the thread

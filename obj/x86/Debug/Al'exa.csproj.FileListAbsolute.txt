@@ -1,0 +1,13 @@
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Al°exa.exe.config
+C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Interop.AutoItX3Lib.dll
+C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Al'exa.csproj.ResolveComReference.cache
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Al°exa.xml
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Al°exa.exe
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Al°exa.pdb
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Al°exa.Core.dll
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\libtesseract.dll
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Al°exa.Core.pdb
+C:\work\GitHubRepos\Alexa\Alexa\bin\Debug\Al°exa.Core.xml
+C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Al°exa.exe
+C:\work\GitHubRepos\Alexa\Alexa\obj\x86\Debug\Al°exa.pdb

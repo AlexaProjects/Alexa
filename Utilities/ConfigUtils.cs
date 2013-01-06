@@ -1,18 +1,18 @@
 ﻿/*  
 Copyright (C) 2013 Alan Pipitone
     
-Alexa is free software: you can redistribute it and/or modify
+Al'exa is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Alexa is distributed in the hope that it will be useful,
+Al'exa is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Alexa.  If not, see <http://www.gnu.org/licenses/>.
+along with Al'exa.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
@@ -260,7 +260,7 @@ namespace Alexa.Utilities
         }
 
         /// <summary>
-        /// Get the the program to run after Alexa
+        /// Get the the program to run after Al'exa
         /// </summary>
         /// <returns>the run nodes</returns>
         static public XmlNodeList GetProgramsToRun

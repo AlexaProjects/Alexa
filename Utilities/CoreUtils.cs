@@ -1,18 +1,18 @@
 ﻿/*  
 Copyright (C) 2013 Alan Pipitone
     
-Alexa is free software: you can redistribute it and/or modify
+Al'exa is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Alexa is distributed in the hope that it will be useful,
+Al'exa is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Alexa.  If not, see <http://www.gnu.org/licenses/>.
+along with Al'exa.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
@@ -38,7 +38,7 @@ using System.Text.RegularExpressions;
 namespace Alexa.Utilities
 {
     /// <summary>
-    /// Provides functions to interact with the Core of Alexa
+    /// Provides functions to interact with the Core of Al'exa
     /// </summary>
     static public class CoreUtils
     {
@@ -67,13 +67,13 @@ namespace Alexa.Utilities
         //stores the LogLevel
         static private bool _debugLogLevel = false;
         static private bool _warningLogLevel = false;
-        static private Stopwatch _stepTime; //stores the elapsed time of a single Alexa step
+        static private Stopwatch _stepTime; //stores the elapsed time of a single Al'exa step
         static private Stopwatch _otherDelayTime; //stores the elapsed time of mouse movement and/or Key digits
 
         //flag that indicates if we run any executable
         static private bool _executableStarted = false;
 
-        //stores the home folder of alexa
+        //stores the home folder of Al'exa
         static private string _homeFolder = "";
 
         //this struct will contain stepName or stepNumber
@@ -222,7 +222,7 @@ namespace Alexa.Utilities
             {
                 //Init the AutoIT language interpreter
                 _autoIt = new AutoItX3();
-                //Init the Alexa Core
+                //Init the Al'exa Core
                 _core = new Alexa.Core();
                 //Set the OCR Language data folder
                 _ocrLangData = ConfigUtils.OcrLanguageData;
@@ -230,7 +230,7 @@ namespace Alexa.Utilities
                 _ocrLanguageSelected = ConfigUtils.OcrSelectedLanguage;
                 //Set the debug folder
                 _debugHomeFolder = Path.Combine(ConfigUtils.LogFolder, "steps");
-                //Init the Stopwatch to measure elapsed time of a single Alexa step
+                //Init the Stopwatch to measure elapsed time of a single Al'exa step
                 _stepTime = new Stopwatch();
                 //Init the Stopwatch to measure elapsed time of mouse movement and/or Key digits
                 _otherDelayTime = new Stopwatch();
@@ -261,8 +261,8 @@ namespace Alexa.Utilities
                 {
                     _warningLogLevel = true;
                 }
-                //NOTE: we don't have to set error level, this because Alexa always writes error message.
-                //Alexa will not write any message if user sets the option
+                //NOTE: we don't have to set error level, this because Al'exa always writes error message.
+                //Al'exa will not write any message if user sets the option
 
                 //the core is now initialized
                 _coreInitialized = true;
@@ -1661,7 +1661,7 @@ namespace Alexa.Utilities
                 iconPath = Path.Combine(_homeFolder,alexaStep.Attributes["path"].Value);
                 iconImage = new Bitmap(iconPath);
 
-                //set the alexa core source image
+                //set the Al'exa core source image
                 SetCoreSourceImage(desktopScreen);
 
                 Bitmap clone = new Bitmap(iconImage.Width, iconImage.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
@@ -3465,7 +3465,7 @@ namespace Alexa.Utilities
 
                     //Save the execution time!!!
                     //How do I make the measurement of the time may seems strange, but I have to measure only the time taken by the control to appear
-                    //WITHOUT THE TIME THAT THE ALEXA.CORE TAKE TO ANALYZE THE IMAGES. So, this is the way that I could find to measure the time
+                    //WITHOUT THE TIME THAT THE Alexa.Core TAKE TO ANALYZE THE IMAGES. So, this is the way that I could find to measure the time
                     //efficiently.
                     if (_performanceMouseKeyboardEnable)
                         stepDuration = _stepTime.ElapsedMilliseconds - stepExecutionTime.ElapsedMilliseconds + _otherDelayTime.ElapsedMilliseconds;
@@ -3660,7 +3660,7 @@ namespace Alexa.Utilities
         /// Analyze all windows to find what is written into the step
         /// </summary>
         /// <param name="stepType">the step type</param>
-        /// <param name="alexaStep">the alexa step node</param>
+        /// <param name="alexaStep">the Al'exa step node</param>
         /// <returns>true if what is written into the step is found</returns>
         private static Boolean AnalyzeWindow(StepType stepType, XmlNode alexaStep)
         {
