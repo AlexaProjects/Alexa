@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Alexa</RootNamespace>
-    <AssemblyName>Al°exa</AssemblyName>
+    <AssemblyName>Al.exa</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -39,7 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Al°exa.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Al.exa.xml</DocumentationFile>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
@@ -52,14 +52,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\Al°exa.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Al.exa.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Al°exa.Core">
-      <HintPath>Al'exa.Core\Release\Al°exa.Core.dll</HintPath>
+    <Reference Include="Al.exa.Core">
+      <HintPath>Al'exa.Core\Release\Al.exa.Core.dll</HintPath>
     </Reference>
     <Reference Include="libtesseract">
       <HintPath>externalBin\libtesseract.dll</HintPath>

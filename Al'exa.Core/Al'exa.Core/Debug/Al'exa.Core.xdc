@@ -512,38 +512,38 @@ modalities.
  Default parameter settings suitable for VGA images.
 
 </member>
-<member name="M:Alexa.Core.SetSourceImage(System.Drawing.Bitmap)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="63">
+<member name="M:Alexa.Core.SetSourceImage(System.Drawing.Bitmap)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="63">
 <summary>
 Set the input image of the Alexa Core
 </summary>
 <param name="inputImage">the input image</param>
 </member>
-<member name="M:Alexa.Core.EnableDebug(System.Boolean)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="69">
+<member name="M:Alexa.Core.EnableDebug(System.Boolean)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="69">
 <summary>
 Enable/disable the debug level
 </summary>
 <param name="enable">set true to enable debug</param>
 </member>
-<member name="M:Alexa.Core.SetDebugFolder(System.String)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="75">
+<member name="M:Alexa.Core.SetDebugFolder(System.String)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="75">
 <summary>
 Set the debug folder to save debug image
 </summary>
 <param name="path">the path of debug folder</param>
 </member>
-<member name="M:Alexa.Core.GetSourceImage" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="81">
+<member name="M:Alexa.Core.GetSourceImage" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="81">
 <summary>
 Get the Alexa Core source image
 </summary>
 <returns> Returns the source image</returns>
 </member>
-<member name="M:Alexa.Core.SetBrightnessContrast(System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="87">
+<member name="M:Alexa.Core.SetBrightnessContrast(System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="87">
 <summary>
 Change brightness and contrast of the Alexa Core source image
 </summary>
 <param name="brightness">brightness value</param>
 <param name="contrast">contrast value</param>
 </member>
-<member name="M:Alexa.Core.GetGenericBoxes(System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="94">
+<member name="M:Alexa.Core.GetGenericBoxes(System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="94">
 <summary>
 Find all the boxes (in the Alexa Core source image) that match the arguments.
 </summary>
@@ -552,7 +552,7 @@ Find all the boxes (in the Alexa Core source image) that match the arguments.
 <param name="tollerance">tollerance of height and width (pixel)</param>
 <returns> Returns all input boxes found</returns>
 </member>
-<member name="M:Alexa.Core.GetGenericBoxesV2(System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="103">
+<member name="M:Alexa.Core.GetGenericBoxesV2(System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="103">
 <summary>
 Find all the boxes (in the Alexa Core source image) that match the arguments.
 </summary>
@@ -561,43 +561,43 @@ Find all the boxes (in the Alexa Core source image) that match the arguments.
 <param name="tollerance">tollerance of height and width (pixel)</param>
 <returns> Returns all input boxes found</returns>
 </member>
-<member name="M:Alexa.Core.GetInputBoxes" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="112">
+<member name="M:Alexa.Core.GetInputBoxes" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="112">
 <summary>
 Find all the input boxes in the Alexa Core source image.
 </summary>
 <returns> Returns all input boxes found</returns>
 </member>
-<member name="M:Alexa.Core.GetInputBoxesV2" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="118">
+<member name="M:Alexa.Core.GetInputBoxesV2" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="118">
 <summary>
 Find all the input boxes in the Alexa Core source image.
 </summary>
 <returns> Returns all input boxes found</returns>
 </member>
-<member name="M:Alexa.Core.GetButtons" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="124">
+<member name="M:Alexa.Core.GetButtons" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="124">
 <summary>
 Find all buttons in the Alexa Core source image.
 </summary>
 <returns> Returns buttons found</returns>
 </member>
-<member name="M:Alexa.Core.GetButtonsV2" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="130">
+<member name="M:Alexa.Core.GetButtonsV2" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="130">
 <summary>
 Find all buttons in the Alexa Core source image.
 </summary>
 <returns> Returns buttons found</returns>
 </member>
-<member name="M:Alexa.Core.GetIconListBoxes" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="136">
+<member name="M:Alexa.Core.GetIconListBoxes" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="136">
 <summary>
 Find all list boxes in the Alexa Core source image.
 </summary>
 <returns> Returns all List Boxes found</returns>
 </member>
-<member name="M:Alexa.Core.GetIconListBoxesV2" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="142">
+<member name="M:Alexa.Core.GetIconListBoxesV2" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="142">
 <summary>
 Find all list boxes in the Alexa Core source image.
 </summary>
 <returns> Returns all List Boxes found</returns>
 </member>
-<member name="M:Alexa.Core.GetChars(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="148">
+<member name="M:Alexa.Core.GetChars(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="148">
 <summary>
 Find all chars in the Alexa Core source image.
 </summary>
@@ -605,7 +605,7 @@ Find all chars in the Alexa Core source image.
 <param name="spaceThickness">space thickness</param>
 <returns> Returns all chars found</returns>
 </member>
-<member name="M:Alexa.Core.GetCharsV2(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="156">
+<member name="M:Alexa.Core.GetCharsV2(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="156">
 <summary>
 Find all chars in the Alexa Core source image.
 </summary>
@@ -613,7 +613,7 @@ Find all chars in the Alexa Core source image.
 <param name="spaceThickness">space thickness</param>
 <returns> Returns all chars found</returns>
 </member>
-<member name="M:Alexa.Core.GetWords(System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="164">
+<member name="M:Alexa.Core.GetWords(System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="164">
 <summary>
 Find all chars in the Alexa Core source image.
 </summary>
@@ -623,7 +623,7 @@ Find all chars in the Alexa Core source image.
 <param name="maxWidth">max word width</param>
 <returns> Returns all words found</returns>
 </member>
-<member name="M:Alexa.Core.GetWordsV2(System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="174">
+<member name="M:Alexa.Core.GetWordsV2(System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="174">
 <summary>
 Find all chars in the Alexa Core source image.
 </summary>
@@ -633,13 +633,13 @@ Find all chars in the Alexa Core source image.
 <param name="maxWidth">max word width</param>
 <returns> Returns all words found</returns>
 </member>
-<member name="M:Alexa.Core.GetInterestPoints" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="184">
+<member name="M:Alexa.Core.GetInterestPoints" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="184">
 <summary>
 Find all boxes in the Alexa Core source image.
 </summary>
 <returns> Returns all boxes</returns>
 </member>
-<member name="M:Alexa.Core.FindIcon(System.Drawing.Bitmap,System.Double)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="190">
+<member name="M:Alexa.Core.FindIcon(System.Drawing.Bitmap,System.Double)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="190">
 <summary>
 Find the icon in the Alexa Core source image.
 </summary>
@@ -647,12 +647,12 @@ Find the icon in the Alexa Core source image.
 <param name="threshold">the threshold</param>
 <returns>Returns the coordinates of the icon</returns>
 </member>
-<member name="M:Alexa.Core.BinarizeImage" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="198">
+<member name="M:Alexa.Core.BinarizeImage" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="198">
 <summary>
 Binarize the Alexa Core source image
 </summary>
 </member>
-<member name="M:Alexa.Core.ReplaceColor(System.Drawing.Bitmap,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="203">
+<member name="M:Alexa.Core.ReplaceColor(System.Drawing.Bitmap,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="203">
 <summary>
 Replace color into the Alexa Core source image
 </summary>
@@ -663,18 +663,18 @@ Replace color into the Alexa Core source image
 <param name="newG">new green component</param>
 <param name="newB">new blue component</param>
 </member>
-<member name="M:Alexa.Core.Release" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="214">
+<member name="M:Alexa.Core.Release" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="214">
 <summary>
 Release all objects of Alexa Core
 </summary>
 </member>
-<member name="M:Alexa.Core.GetBoxes(System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="244">
+<member name="M:Alexa.Core.GetBoxes(System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="244">
 <summary>
 Find boxes in the Alexa Core source image.
 </summary>
 <returns> Returns all boxes</returns>
 </member>
-<member name="M:Alexa.Core.GetBoxes2(System.Int32)" decl="true" source="c:\work\progetti visual studio 2010\alexa_\al'exa.core\al'exa.core\al'exa.core.h" line="250">
+<member name="M:Alexa.Core.GetBoxes2(System.Int32)" decl="true" source="c:\work\githubrepos\alexa\alexa\al'exa.core\al'exa.core\al'exa.core.h" line="250">
 <summary>
 Find boxes in the Alexa Core source image.
 </summary>
