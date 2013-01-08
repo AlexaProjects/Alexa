@@ -1,7 +1,7 @@
 Al'exa
 ======
 
-This repository contains the source code of Al'exa (It's pronounced like "Alexa"), if you have any problem with Visual Studio and the external references please read the README file that you can find into the externalBin folder.
+This repository contains the source code of Al'exa (It's pronounced like "Alexa"), for the external references to load in Visual Studio please read the README file that you can find into the externalBin folder.
 
 Al'exa is a computer vision system that allows you to test and monitor your applications (and interact with them) simulating the human behavior.
 
