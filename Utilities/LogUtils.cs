@@ -47,7 +47,7 @@ namespace Alexa.Utilities
         public static void Init()
         {
             //get the log filename
-            _fileName = ConfigUtils.LogFolder + @"\Al'exa.log";
+            _fileName = ConfigUtils.LogFolder + @"\Al.exa.log";
         }
 
 

@@ -244,6 +244,11 @@
             <param name="path">The path of folder to compress</param>
             <param name="compress">set true to compress the folder</param>
         </member>
+        <member name="M:Alexa.Utilities.SystemUtils.RunExternalScript">
+            <summary>
+            Runs external script
+            </summary>
+        </member>
         <member name="P:Alexa.Utilities.SystemUtils.ScreenHeight">
             <summary>
             Get the Height of screen resolution

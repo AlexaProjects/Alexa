@@ -183,47 +183,6 @@ namespace Alexa
             //if exit is true then exit with exitcode 3
             //if (exit) Environment.Exit(3);
         }
-
-        public static void RunExternalScript()
-        {
-            try
-            {
-                foreach(XmlNode node in ConfigUtils.GetProgramsToRun)
-                {
-
-                    //contains the full path (plus name) of the program that we have to run
-                    string executable = "";
-
-                    //contains the arguments of the program
-                    string arguments = "";
-
-                    //get the executable
-                    executable = node.SelectSingleNode("executable").InnerText;
-
-                    //get the arguments
-                    foreach (XmlNode argument in node.SelectNodes("argument"))
-                    {
-                        if (arguments == "") arguments = argument.InnerText;
-                        else
-                            arguments = arguments + " " + argument.InnerText;
-                    }
-
-                    //create the process object
-                    Process p = new Process();
-                    p.StartInfo.UseShellExecute = false;
-
-                    //set the filename and the arguments
-                    p.StartInfo.FileName = executable;
-                    if (arguments != "") p.StartInfo.Arguments = arguments;
-
-                    //start the process
-                    p.WaitForExit();
-                }
-            }
-            catch
-            {
-            }
-        }
     }
     
 }

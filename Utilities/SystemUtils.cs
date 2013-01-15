@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Automation;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Alexa.Utilities
 {
@@ -575,6 +576,50 @@ namespace Alexa.Utilities
             {
                 var screen = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
                 return screen.Width;
+            }
+        }
+
+        /// <summary>
+        /// Runs external script
+        /// </summary>
+        public static void RunExternalScript()
+        {
+            try
+            {
+                foreach (XmlNode node in ConfigUtils.GetProgramsToRun)
+                {
+
+                    //contains the full path (plus name) of the program that we have to run
+                    string executable = "";
+
+                    //contains the arguments of the program
+                    string arguments = "\"" + ConfigUtils.OutputFolder + "\"";
+
+                    //get the executable
+                    executable = node.SelectSingleNode("executable").InnerText;
+
+                    //get the arguments
+                    foreach (XmlNode argument in node.SelectNodes("argument"))
+                    {
+                        arguments = arguments + " " + argument.InnerText;
+                    }
+
+                    //create the process object
+                    Process p = new Process();
+                    p.StartInfo.UseShellExecute = false;
+
+                    //set the filename and the arguments
+                    p.StartInfo.FileName = executable;
+                    if (arguments != "") p.StartInfo.Arguments = arguments;
+
+                    //start the process
+                    p.Start();
+                }
+            }
+            catch(Exception ex)
+            {
+                //write the exception
+                LogUtils.Write(ex);
             }
         }
     }

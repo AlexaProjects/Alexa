@@ -49,6 +49,7 @@ namespace Alexa.Utilities
         static private string _debugFolderDateFormat = "dd_MM_yyyy_HH.mm.ss.fff";
         static private string _debugImageDateFormat = "HH.mm.ss.fff";
         static private string _debugHomeFolder = "";
+        static private string _debugCoreFolder = "";
         #endregion
 
         static private AutoItX3 _autoIt; //Declare an AutoIT Interpreter object type
@@ -1653,7 +1654,7 @@ namespace Alexa.Utilities
                     //save the screenshot of the desktop
                     desktopScreen.Save(Path.Combine(_debugFullPath, imageName));
 
-                    LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Debug, "save debug image: " + _debugPath + "\\" + imageName);
+                    //LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Debug, "save debug image: " + _debugPath + "\\" + imageName);
                 }
 
 
@@ -1690,7 +1691,11 @@ namespace Alexa.Utilities
                     }
 
                     //if we are in debug then write 
-                    if (_debugLogLevel) LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Debug, "a similar icon was found. Icon minval is: " + iconbox.minval);
+                    if (_debugLogLevel)
+                    {
+                        LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Debug, "save debug image: " + _debugCoreFolder + "iconFound.bmp");
+                        LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Debug, "a similar icon was found. Icon minval is: " + iconbox.minval);
+                    }
 
                     //get the coordinates of where we have to click
                     mouseX = iconbox.x + _clickOffsetX;
@@ -2898,6 +2903,7 @@ namespace Alexa.Utilities
                     {
                         //if tessaract has not been successfully loaded then write the error
                         LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Error, "Failed to start OCR engine");
+                        Program.Finish(true);
                         return false;
                     }
                     else
@@ -2945,7 +2951,7 @@ namespace Alexa.Utilities
                 {
                     //write the error
                     LogUtils.Write(ex);
-
+                    Program.Finish(true);
                     return false;
                 }
                 
@@ -2977,6 +2983,7 @@ namespace Alexa.Utilities
             _debugFullPath = "";
             _debugPath = "";
             _debugImageName = "";
+            _debugCoreFolder = "";
 
             //flag that indicates if the input box was found
             _found = false;
@@ -3406,13 +3413,15 @@ namespace Alexa.Utilities
             //start stopwatch
             _stepTime.Start();
 
+            stepTiming.startTime = DateTime.Now;
+
             while (true) //waits until we will find the input box or a timeout will occur
             {
                 //reset stopwatch
                 stepExecutionTime.Reset();
                 //start stopwatch
                 stepExecutionTime.Start();
-                stepTiming.startTime = DateTime.Now;
+
 
                 //if debug is active
                 if (_debugLogLevel && stepType != StepType.RunExe)
@@ -3430,7 +3439,8 @@ namespace Alexa.Utilities
                     if (!Directory.Exists(dir.FullName)) dir.Create();
 
                     //set the debug folder for the Alexa.Core
-                    _core.SetDebugFolder(Path.Combine(_debugFullPath, DateTime.Now.ToString(_debugImageDateFormat) + "_"));
+                    _debugCoreFolder = Path.Combine(_debugFullPath, DateTime.Now.ToString(_debugImageDateFormat) + "_");
+                    _core.SetDebugFolder(_debugCoreFolder);
                 }
 
                 //check what method we have to execute and then execute it
@@ -3676,6 +3686,9 @@ namespace Alexa.Utilities
             int mouseX = 0;
             int mouseY = 0;
 
+            bool wasClickOff = false;
+            bool wasMouseMoveOff = false;
+
             //store the tab title image
             Bitmap tabTitleImg = null;
             //store the desktop screenshot
@@ -3697,6 +3710,10 @@ namespace Alexa.Utilities
             int tabBoxContrast = -999;
             int tabTitleBrightness = -999;
             int tabTitleContrast = -999;
+
+            //used for icon in tabs
+            int subtractLeft = 0;
+            int subtractRight = 0;
 
             bool binarizeImage = false;
             bool binarizeTab = false;
@@ -3797,6 +3814,20 @@ namespace Alexa.Utilities
                     binarizeTab = false;
             }
             catch { binarizeTab = false; }
+
+            try
+            {
+                //take tab contrast, it is not mandatory.
+                subtractRight = Int32.Parse(alexaStep.SelectSingleNode("window").SelectSingleNode("tab").Attributes["right.subtraction"].Value);
+            }
+            catch { }
+
+            try
+            {
+                //take tab contrast, it is not mandatory.
+                subtractLeft = Int32.Parse(alexaStep.SelectSingleNode("window").SelectSingleNode("tab").Attributes["left.subtraction"].Value);
+            }
+            catch { }
 
             try
             {
@@ -3943,8 +3974,16 @@ namespace Alexa.Utilities
                         int boxCnt = 0;
                         foreach (Core.Box box in tabBoxes)
                         {
-                            tabTitleImg = CropRect(desktopScreen, new Rectangle(box.x, box.y, box.width, box.height));
-                            tabTitleImg = (Bitmap)ResizeImage(tabTitleImg, new Size(tabTitleImg.Width * 3, tabTitleImg.Height * 3));
+                            if (subtractLeft != 0 || subtractRight != 0)
+                            {
+                                tabTitleImg = CropRect(desktopScreen, new Rectangle(box.x + subtractLeft, box.y, box.width - subtractRight - subtractLeft, box.height));
+                                tabTitleImg = (Bitmap)ResizeImage(tabTitleImg, new Size(tabTitleImg.Width * 3, tabTitleImg.Height * 3));
+                            }
+                            else
+                            {
+                                tabTitleImg = CropRect(desktopScreen, new Rectangle(box.x, box.y, box.width, box.height));
+                                tabTitleImg = (Bitmap)ResizeImage(tabTitleImg, new Size(tabTitleImg.Width * 3, tabTitleImg.Height * 3));
+                            }
 
                             //set Alexa.Core source image
                             SetCoreSourceImage(tabTitleImg);
@@ -3972,7 +4011,7 @@ namespace Alexa.Utilities
                             }
                             #endregion
 
-                            //if the OCR engine has found the label text then click on the input box and insert the text
+                            //if the OCR engine has found the label text then click
                             if (checkStringByOCR(_core.GetSourceImage(), tabTitle) == true)
                             {
                                 //get the coordinates of where we have to click
@@ -3983,8 +4022,33 @@ namespace Alexa.Utilities
                                     LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Debug, "click on the generic box");
                                 #endregion
 
-                                //otherwise only click
+                                if (_mouseClick == false)
+                                {
+                                    wasClickOff = true;
+                                    _mouseClick = true;
+                                }
+
+                                if (_mouseMove == false)
+                                {
+                                    wasMouseMoveOff = true;
+                                    _mouseMove = true;
+                                }
+
+
+                                //click
                                 Click(mouseX, mouseY);
+
+                                if (wasClickOff == true)
+                                {
+                                    wasClickOff = false;
+                                    _mouseClick = false;
+                                }
+
+                                if (wasMouseMoveOff == true)
+                                {
+                                    wasMouseMoveOff = false;
+                                    _mouseMove = false;
+                                }
 
                                 Thread.Sleep(1000);
 

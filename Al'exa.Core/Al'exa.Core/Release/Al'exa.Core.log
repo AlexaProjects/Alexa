@@ -1,7 +1,7 @@
-﻿Build started 07/01/2013 02:45:55.
+﻿Build started 15/01/2013 21:54:12.
      1>Project "C:\work\GitHubRepos\Alexa\Alexa\Al'exa.Core\Al'exa.Core\Al'exa.Core.vcxproj" on node 2 (rebuild target(s)).
-     1>PrepareForBuild:
-         Creating directory "C:\work\GitHubRepos\Alexa\Alexa\Al'exa.Core\Release\".
+     1>_PrepareForClean:
+         Deleting file "Release\Al'exa.Core.lastbuildstate".
        InitializeBuildStatus:
          Creating "Release\Al'exa.Core.unsuccessfulbuild" because "AlwaysCreate" was specified.
        GenerateTargetFrameworkMonikerAttribute:
@@ -53,4 +53,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.43
+Time Elapsed 00:00:08.97

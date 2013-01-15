@@ -558,15 +558,15 @@ namespace Alexa {
 		{
 			if(boxType== 3)
 			{
-				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_2_Chars_Borders.bmp"))).ToPointer(),clone3);
-				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_3_Chars_FoundAll.bmp"))).ToPointer(),clone4);
-				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_4_Chars_FoundThatMatch.bmp"))).ToPointer(),clone);
+				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_1_Chars_Borders.bmp"))).ToPointer(),clone3);
+				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_2_Chars_FoundAll.bmp"))).ToPointer(),clone4);
+				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_3_Chars_FoundThatMatch.bmp"))).ToPointer(),clone);
 			}
 			else if(boxType == 4)
 			{
-				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_2_Words_Borders.bmp"))).ToPointer(),clone3);
-				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_3_Words_FoundAll.bmp"))).ToPointer(),clone4);
-				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_4_Words_FoundThatMatch.bmp"))).ToPointer(),clone);
+				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_1_Words_Borders.bmp"))).ToPointer(),clone3);
+				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_2_Words_FoundAll.bmp"))).ToPointer(),clone4);
+				imwrite((const char*)(Marshal::StringToHGlobalAnsi(_debugFolder + gcnew System::String("CoreProc_3_Words_FoundThatMatch.bmp"))).ToPointer(),clone);
 			}
 			else
 			{

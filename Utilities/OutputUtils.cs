@@ -405,7 +405,8 @@ namespace Alexa.Utilities
             string outString = standardOutputString + "|" + nagiosPerformance;
             Console.Write(outString);
 
-            Program.RunExternalScript();
+            //run external scripts
+            SystemUtils.RunExternalScript();
 
             //exit with current exit code
             Environment.Exit(standardOutputExitCode);
