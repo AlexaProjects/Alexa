@@ -149,9 +149,12 @@ namespace Alexa
 
             //close window(s)
             Thread.Sleep(2000);
+
             string windowToCloseRegEx = ConfigUtils.WindowTitleToClose;
             if (windowToCloseRegEx != "")
                 SystemUtils.User32.CloseWindow(windowToCloseRegEx);
+
+            Thread.Sleep(2000);
 
             if (_processToKillRegEx != "")
             {

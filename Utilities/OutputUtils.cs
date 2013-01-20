@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Collections;
 
 namespace Alexa.Utilities
 {
@@ -46,21 +47,41 @@ namespace Alexa.Utilities
             public XmlNode stepNode;
         }
 
+        //structure for all steps that have not been executed
+        private struct UnknownStepStruct
+        {
+            //public long stepDuration;
+            public string stepName;
+        }
+
         /// <summary>
         /// Print the output and exit from the program
         /// </summary>
         public static void Finish(Boolean exception)
         {
+            int executedStepCounter = StepTimingsCollection.Count();
+
             bool enableGlobalOutput = false;
 
             //contains the message to send into the standard output
-            string standardOutputString = "Al'exa service is ok"; //default message
+            string outString = "all steps are ok";
+
+            string serviceName = "";
 
             //contains the nagios performance string
             string nagiosPerformance = "";
 
             //contains the exit code of Al'exa
             int standardOutputExitCode = 0; //default exit code is 0, all ok
+
+            //they will contain step with an error state
+            List<String> OkStep = new List<String>();
+            List<String> CriticalStep = new List<String>();
+            List<String> WarningStep = new List<String>();
+            List<String> TimeoutStep = new List<String>();
+
+            //list for all steps that have not been executed
+            List<UnknownStepStruct> unknownStepList = new List<UnknownStepStruct>();
 
             //declare the output file
             XmlDocument outputFile = new XmlDocument();
@@ -103,6 +124,9 @@ namespace Alexa.Utilities
                     string globalName = Global.xmlNode.SelectSingleNode("name").InnerText;
                     global.SetAttribute("name", globalName);
 
+                    serviceName = Global.xmlNode.SelectSingleNode("name").InnerText;
+                    outString = "'" + serviceName + "' service is ok, all steps are ok";
+
                     //add the duration of global step to the nagios performance string
                     nagiosPerformance = nagiosPerformance + globalName + "=" + Global.duration.ToString() + "ms";
                 }
@@ -117,11 +141,18 @@ namespace Alexa.Utilities
                     //set the description of global node
                     string description = Global.xmlNode.SelectSingleNode("description").InnerText;
                     global.SetAttribute("description", description);
-
-                    //set the message for the standard output
-                    standardOutputString = description + " service is ok";
                 }
                 catch { }
+
+                //add current step to the OkStep Array
+                try
+                {
+                    OkStep.Add(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+                }
+                catch
+                {
+                    OkStep.Add("global step;" + globalPerformance.Attributes["duration"].Value);
+                }
 
                 try
                 {
@@ -138,11 +169,23 @@ namespace Alexa.Utilities
                         //change global exit code
                         globalExitcode.InnerText = "1";
 
-                        //set the standard output message
-                        standardOutputString = "one or more steps have exceeded the warning threshold";
-
                         //change the standard output exit code
                         standardOutputExitCode = 1;
+
+                        //add this step to the warning steps
+                        try
+                        {
+                            WarningStep.Add(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+
+                            OkStep.Remove(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+                        }
+                        catch
+                        {
+                            WarningStep.Add("global step;" + globalPerformance.Attributes["duration"].Value);
+
+                            OkStep.Remove("global step;" + globalPerformance.Attributes["duration"].Value);
+                        }
+                        
                     }
                 }
                 catch
@@ -166,11 +209,24 @@ namespace Alexa.Utilities
                         //change global exit code
                         globalExitcode.InnerText = "2";
 
-                        //set the standard output message
-                        standardOutputString = "one or more steps have exceeded the critical threshold";
-
                         //set the standard output exit code
                         standardOutputExitCode = 2;
+
+                        //add this step to the critical steps
+                        try
+                        {
+                            CriticalStep.Add(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+
+                            OkStep.Remove(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+                            WarningStep.Remove(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+                        }
+                        catch
+                        {
+                            CriticalStep.Add("global step;" + globalPerformance.Attributes["duration"].Value);
+
+                            OkStep.Remove("global step;" + globalPerformance.Attributes["duration"].Value);
+                            WarningStep.Remove("global step;" + globalPerformance.Attributes["duration"].Value);
+                        }
                     }
                 }
                 catch
@@ -191,11 +247,27 @@ namespace Alexa.Utilities
                         //change global exit code
                         globalExitcode.InnerText = "3";
 
-                        //set the standard output message
-                        standardOutputString = "a timeout has occurred while executing one or more steps";
-
                         //set the standard output exit code
                         standardOutputExitCode = 3;
+
+                        //add this step to the unknown steps
+                        try
+                        {
+                            TimeoutStep.Add(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+
+                            OkStep.Remove(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+                            WarningStep.Remove(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+                            CriticalStep.Remove(global.Attributes["name"].Value + " (global step);" + globalPerformance.Attributes["duration"].Value);
+                        }
+                        catch
+                        {
+                            TimeoutStep.Add("global step;" + globalPerformance.Attributes["duration"].Value);
+
+                            OkStep.Remove("global step;" + globalPerformance.Attributes["duration"].Value);
+                            WarningStep.Remove("global step;" + globalPerformance.Attributes["duration"].Value);
+                            CriticalStep.Remove("global step;" + globalPerformance.Attributes["duration"].Value);
+                        }
+
                     }
                 }
                 catch { }
@@ -267,6 +339,16 @@ namespace Alexa.Utilities
                     }
                     catch { }
 
+                    //add current step to the OkStep Array
+                    try
+                    {
+                        OkStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                    }
+                    catch
+                    {
+                        OkStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                    }
+
                     try
                     {
                         //set warning value into the output file for the current step
@@ -282,11 +364,22 @@ namespace Alexa.Utilities
                             //change the exit code of current step
                             exitcode.InnerText = "1";
 
+                            //add this step to the warning steps
+                            try
+                            {
+                                WarningStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+
+                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                            }
+                            catch
+                            {
+                                WarningStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+
+                                OkStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                            }
+
                             if (standardOutputExitCode <= 1)
                             {
-                                //set the standard output message
-                                standardOutputString = "one or more steps have exceeded the warning threshold";
-
                                 //set the standard output exit code
                                 standardOutputExitCode = 1;
                             }
@@ -314,11 +407,24 @@ namespace Alexa.Utilities
                             //change the exit code of current step
                             exitcode.InnerText = "2";
 
+                            //add this step to the critical steps
+                            try
+                            {
+                                CriticalStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+
+                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                            }
+                            catch
+                            {
+                                CriticalStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+
+                                OkStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                            }
+
                             if (standardOutputExitCode <= 2)
                             {
-                                //set the standard output message
-                                standardOutputString = "one or more steps have exceeded the critical threshold";
-
                                 //set the standard output exit code
                                 standardOutputExitCode = 2;
                             }
@@ -340,11 +446,28 @@ namespace Alexa.Utilities
                         //check if the global step has exceeded the timeout value
                         if (duration >= timeout)
                         {
+                            //add this step to the timeout steps
+                            try
+                            {
+                                TimeoutStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+
+                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                CriticalStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                            }
+                            catch
+                            {
+                                TimeoutStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+
+                                OkStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                CriticalStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                            }
+
+                            //performance.SetAttribute("duration", duration.ToString());
+
                             //change global exit code
                             exitcode.InnerText = "3";
-
-                            //set the standard output message
-                            standardOutputString = "a timeout has occurred while executing one or more steps";
 
                             //set the standard output exit code
                             standardOutputExitCode = 3;
@@ -364,14 +487,256 @@ namespace Alexa.Utilities
                 
             }
 
-            if (exception == true)
+            int cnt = 0;
+            foreach(XmlNode notExecutedStep in ConfigUtils.AlexaSteps)
             {
-                standardOutputString = "An internal exception has occurred. Some steps may not have been executed. Please read the Al'exa.log file";
-                standardOutputExitCode = 3;
+                UnknownStepStruct unknownStepStruct = new UnknownStepStruct();
+
+                if (cnt < executedStepCounter)
+                {
+                    cnt++;
+                    continue;
+                }
+                else
+                {
+                    bool enableOutput = false;
+
+                    try
+                    {
+                        //check if we have to write the output of current step into the output file
+                        if (notExecutedStep.SelectSingleNode("performance").Attributes["output"].Value.ToLower() == "yes")
+                            enableOutput = true;
+                    }
+                    catch { }
+
+                    if (enableOutput)
+                    {
+                        standardOutputExitCode = 3;
+
+                        //declare the step node (and its child node) that will be written to the output file
+                        XmlElement step = outputFile.CreateElement("step");
+                        XmlElement performance = outputFile.CreateElement("performance");
+                        XmlElement exitcode = outputFile.CreateElement("exitcode");
+
+                        performance.SetAttribute("start", "n.a.");
+                        performance.SetAttribute("end", "n.a.");
+                        performance.SetAttribute("duration", "n.a.");
+
+                        //set the exit code of the step
+                        exitcode.InnerText = "3";
+
+                        //set the step number
+                        step.SetAttribute("number", (cnt + 1).ToString());
+
+
+                        try
+                        {
+                            //set the step name
+                            string stepName = notExecutedStep.Attributes["name"].Value;
+                            step.SetAttribute("name", stepName);
+
+                            unknownStepStruct.stepName = stepName + " (Step " + (cnt + 1).ToString() + ")";
+
+                            //add the duration of current step to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + " " + stepName + "=0ms";
+                        }
+                        catch
+                        {
+                            //add the duration of current step to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + " Step " + (cnt + 1).ToString() + "=0ms";
+                            unknownStepStruct.stepName = "Step " + (cnt + 1).ToString();
+                        }
+
+                        try
+                        {
+                            //set warning value into the output file for the current step
+                            long warningLevel = long.Parse(notExecutedStep.SelectSingleNode("performance").Attributes["warning"].Value);
+                            performance.SetAttribute("warning", warningLevel.ToString());
+
+                            //add warning threshold to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + ";" + warningLevel.ToString();
+                        }
+                        catch
+                        {
+                            //if no warning threshold is set then add only a semicolon to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + ";";
+                        }
+
+                        try
+                        {
+                            //set global critical value into the output file fo the current step
+                            long errorLevel = long.Parse(notExecutedStep.SelectSingleNode("performance").Attributes["critical"].Value);
+                            performance.SetAttribute("critical", errorLevel.ToString());
+
+                            //add critical threshold to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + ";" + errorLevel.ToString();
+                        }
+                        catch
+                        {
+                            //if no warning threshold is set then add only a semicolon to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + ";";
+                        }
+
+
+                        try
+                        {
+                            //set the timeout value into the output file for the current step
+                            long timeout = long.Parse(notExecutedStep.SelectSingleNode("performance").Attributes["timeout.value"].Value);
+                            performance.SetAttribute("timeout", timeout.ToString());
+                        }
+                        catch { }
+
+                        //we don't have a min or max value for the performance data.
+                        //So we I to add two semicolon to avoid any kind of error on the graph
+                        nagiosPerformance = nagiosPerformance + ";;";
+
+                        //add current unknownStepStruct element to the unknownStepList
+                        unknownStepList.Add(unknownStepStruct);
+
+                        //put together step node and step child nodes
+                        step.AppendChild(performance);
+                        step.AppendChild(exitcode);
+                        steps.AppendChild(step);
+                        cnt++;
+                    }
+                }
             }
 
             //append all steps to the root node
             xRoot.AppendChild(steps);
+
+            string CriticalString = "critical state step(s):";
+
+            foreach (String critStep in CriticalStep)
+            {
+                CriticalString = CriticalString + " " + critStep.Split(';')[0] + ",";
+            }
+
+            CriticalString = CriticalString.Remove(CriticalString.Length - 1);
+
+            string WarningString = "warning state step(s):";
+
+            foreach (String warnStep in WarningStep)
+            {
+                WarningString = WarningString + " " + warnStep.Split(';')[0] + ",";
+            }
+
+            WarningString = WarningString.Remove(WarningString.Length - 1);
+
+            string TimeoutString = "timeout state step(s):";
+
+            foreach (String timeoutStep in TimeoutStep)
+            {
+                TimeoutString = TimeoutString + " " + timeoutStep.Split(';')[0] + ",";
+            }
+
+            TimeoutString = TimeoutString.Remove(TimeoutString.Length - 1);
+
+            string unknownStepsString = "unknown state step(s):";
+
+            foreach (UnknownStepStruct unknownStepElement in unknownStepList)
+            {
+                unknownStepsString = unknownStepsString + " " + unknownStepElement.stepName + ",";
+            }
+
+            unknownStepsString = unknownStepsString.Remove(unknownStepsString.Length - 1);
+
+
+            if (standardOutputExitCode != 0)
+            {
+                outString = "";
+            }
+
+            if (exception == true)
+            {
+                outString = "An internal exception has occurred. Some steps may not have been executed. Please read the Al'exa.log file";
+                standardOutputExitCode = 3;
+            }
+
+
+            if (TimeoutString != "timeout state step(s)")
+            {
+                outString = outString + TimeoutString + ", ";
+            }
+
+            if (CriticalString != "critical state step(s)")
+            {
+                outString = outString + CriticalString + ", ";
+            }
+
+            if (WarningString != "warning state step(s)")
+            {
+                outString = outString + WarningString + ", ";
+            }
+
+            if (unknownStepsString != "unknown state step(s)")
+            {
+                outString = outString + unknownStepsString + ", ";
+            }
+
+            outString = outString.Remove(outString.Length - 2);
+            //print to the console the message
+            outString = outString + "|" + nagiosPerformance;
+
+            if (standardOutputExitCode == 0)
+            {
+                outString = "OK: " + outString;
+            }
+            else if (standardOutputExitCode == 1)
+            {
+                if(serviceName != "")
+                    outString = "WARNING: '" + serviceName + "' service has some problems: " + outString;
+                else
+                    outString = "WARNING: " + outString;
+            }
+            else if (standardOutputExitCode == 2)
+            {
+                if (serviceName != "")
+                    outString = "CRITICAL: '" + serviceName + "' service has some problems: " + outString;
+                else
+                    outString = "CRITICAL: " + outString;
+            }
+            else if (standardOutputExitCode == 3)
+            {
+                if (serviceName != "")
+                    outString = "UNKNOWN: '" + serviceName + "' service has some problems: " + outString;
+                else
+                    outString = "UNKNOWN: " + outString;
+            }
+
+            Console.WriteLine(outString);
+
+
+            string detailString = "";
+            foreach (String critStep in CriticalStep)
+            {
+                Console.WriteLine("CRITICAL: " + critStep.Split(';')[0] + ", duration is " + critStep.Split(';')[1] + " ms");
+                detailString = detailString + "CRITICAL: " + critStep.Split(';')[0] + ", duration is " + critStep.Split(';')[1] + " ms\r\n";
+            }
+
+            foreach (String warningStep in WarningStep)
+            {
+                Console.WriteLine("WARNING: " + warningStep.Split(';')[0] + ", duration is " + warningStep.Split(';')[1] + " ms");
+                detailString = detailString + "WARNING: " + warningStep.Split(';')[0] + ", duration is " + warningStep.Split(';')[1] + " ms\r\n";
+            }
+
+            foreach (String timeoutStep in TimeoutStep)
+            {
+                Console.WriteLine("TIMEOUT: " + timeoutStep.Split(';')[0] + ", duration is " + timeoutStep.Split(';')[1] + " ms");
+                detailString = detailString + "TIMEOUT: " + timeoutStep.Split(';')[0] + ", duration is " + timeoutStep.Split(';')[1] + " ms\r\n";
+            }
+
+            foreach (UnknownStepStruct unknownStepElement in unknownStepList)
+            {
+                Console.WriteLine("UNKNOWN: " + unknownStepElement.stepName);
+                detailString = detailString + "UNKNOWN: " + unknownStepElement.stepName + "\r\n";
+            }
+
+            foreach (String okStep in OkStep)
+            {
+                Console.WriteLine("OK: " + okStep.Split(';')[0] + ", duration is " + okStep.Split(';')[1] + " ms");
+                detailString = detailString + "OK: " + okStep.Split(';')[0] + ", duration is " + okStep.Split(';')[1] + " ms\r\n";
+            }
 
             //create a node that contains the data formatted for nagios
             XmlElement nagiosService = outputFile.CreateElement("nagios");
@@ -379,7 +744,7 @@ namespace Alexa.Utilities
             XmlElement nagiosExitCode = outputFile.CreateElement("exitcode");
 
             //set the values of the nagios nodes
-            nagiosMessage.InnerText = standardOutputString + "|" + nagiosPerformance;
+            nagiosMessage.InnerText = outString + "|" + nagiosPerformance + "\r\n" + detailString;
             nagiosExitCode.InnerText = standardOutputExitCode.ToString();
 
             //append nagios child nodes to nagios root node
@@ -400,10 +765,6 @@ namespace Alexa.Utilities
                 //save the xml
                 outputFile.Save(Path.Combine(ConfigUtils.OutputFolder, "output.xml"));
             }
-
-            //print to the console the message
-            string outString = standardOutputString + "|" + nagiosPerformance;
-            Console.Write(outString);
 
             //run external scripts
             SystemUtils.RunExternalScript();
