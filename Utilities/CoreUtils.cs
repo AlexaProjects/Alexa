@@ -3524,6 +3524,7 @@ namespace Alexa.Utilities
                         stepTiming.endTime = DateTime.Now;
                         stepTiming.stepDuration = _stepTime.ElapsedMilliseconds;
 
+
                         //add above info to StepTimingsCollection
                         OutputUtils.StepTimingsCollection.Add(stepTiming);
 

@@ -446,6 +446,45 @@ namespace Alexa.Utilities
                         //check if the global step has exceeded the timeout value
                         if (duration >= timeout)
                         {
+
+                            if (ConfigUtils.OutputTimeoutHandler == 1)
+                            {
+                                try
+                                {
+                                    //set the step name
+                                    string stepName = stepTiming.stepNode.Attributes["name"].Value;
+
+                                    nagiosPerformance = nagiosPerformance.Replace(
+                                        stepName + "=" + duration.ToString() + "ms",
+                                        stepName + "=0ms");
+                                }
+                                catch
+                                {
+                                    nagiosPerformance = nagiosPerformance.Replace(
+                                        "Step " + stepTiming.stepNumber.ToString() + "=" + duration.ToString() + "ms",
+                                        "Step " + stepTiming.stepNumber.ToString() + "=0ms");
+                                }
+                            }
+                            else if (ConfigUtils.OutputTimeoutHandler == 2)
+                            {
+                                try
+                                {
+                                    //set the step name
+                                    string stepName = stepTiming.stepNode.Attributes["name"].Value;
+
+                                    nagiosPerformance = nagiosPerformance.Replace(
+                                        stepName + "=" + duration.ToString() + "ms",
+                                        stepName + "=ms");
+                                }
+                                catch
+                                {
+                                    nagiosPerformance = nagiosPerformance.Replace(
+                                        "Step " + stepTiming.stepNumber.ToString() + "=" + duration.ToString() + "ms",
+                                        "Step " + stepTiming.stepNumber.ToString() + "=ms");
+                                }
+                            }
+
+
                             //add this step to the timeout steps
                             try
                             {
@@ -538,12 +577,27 @@ namespace Alexa.Utilities
                             unknownStepStruct.stepName = stepName + " (Step " + (cnt + 1).ToString() + ")";
 
                             //add the duration of current step to the nagios performance string
-                            nagiosPerformance = nagiosPerformance + " " + stepName + "=0ms";
+                            if (ConfigUtils.OutputTimeoutHandler == 2)
+                            {
+                                nagiosPerformance = nagiosPerformance + " " + stepName + "=ms";
+                            }
+                            else
+                            {
+                                nagiosPerformance = nagiosPerformance + " " + stepName + "=0ms";
+                            }
                         }
                         catch
                         {
                             //add the duration of current step to the nagios performance string
-                            nagiosPerformance = nagiosPerformance + " Step " + (cnt + 1).ToString() + "=0ms";
+                            if (ConfigUtils.OutputTimeoutHandler == 2)
+                            {
+                                nagiosPerformance = nagiosPerformance + " Step " + (cnt + 1).ToString() + "=ms";
+                            }
+                            else
+                            {
+                                nagiosPerformance = nagiosPerformance + " Step " + (cnt + 1).ToString() + "=0ms";
+                            }
+
                             unknownStepStruct.stepName = "Step " + (cnt + 1).ToString();
                         }
 

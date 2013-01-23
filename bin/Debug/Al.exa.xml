@@ -493,6 +493,12 @@
             </summary>
             <returns>the output folder</returns>
         </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.OutputTimeoutHandler">
+            <summary>
+            Get the output timeout handler mode
+            </summary>
+            <returns>the handler mode</returns>
+        </member>
         <member name="P:Alexa.Utilities.ConfigUtils.WindowTitleToClose">
             <summary>
             Get the regular expression containing the title of window(s) to close

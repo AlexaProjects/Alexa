@@ -218,6 +218,25 @@ namespace Alexa.Utilities
             }
         }
 
+        /// <summary>
+        /// Get the output timeout handler mode
+        /// </summary>
+        /// <returns>the handler mode</returns>
+        static public int OutputTimeoutHandler
+        {
+            get
+            {
+                try
+                {
+                    return Int32.Parse(Global.SelectSingleNode("end/output").Attributes["timeout.printmode"].Value);
+                }
+                catch
+                {
+                    return 0;
+                }
+
+            }
+        }
 
 
         /// <summary>
