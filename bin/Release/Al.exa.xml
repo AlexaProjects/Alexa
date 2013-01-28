@@ -122,6 +122,18 @@
             </summary>
             <param name="alexaStep">the xml node that contains the step</param>
         </member>
+        <member name="M:Alexa.Utilities.CoreUtils.StepMouseMove(System.Xml.XmlNode)">
+            <summary>
+            Runs the method that insert text
+            </summary>
+            <param name="alexaStep">the xml node that contains the step</param>
+        </member>
+        <member name="M:Alexa.Utilities.CoreUtils.StepMouseClick(System.Xml.XmlNode)">
+            <summary>
+            Runs the method that click the mouse
+            </summary>
+            <param name="alexaStep">the xml node that contains the step</param>
+        </member>
         <member name="M:Alexa.Utilities.CoreUtils.ExecDelay(System.Xml.XmlNode)">
             <summary>
             Runs the method that executes Delay
