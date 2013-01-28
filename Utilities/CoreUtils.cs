@@ -335,6 +335,16 @@ namespace Alexa.Utilities
                 {
                     InsertText(alexaStep);
                 }
+                //executes the step type "mousemove"
+                else if (stepType == "mousemove")
+                {
+                    StepMouseMove(alexaStep);
+                }
+                //executes the step type "mouseclick"
+                else if (stepType == "mouseclick")
+                {
+                    StepMouseClick(alexaStep);
+                }
                 //executes the step type "delay"
                 else if (stepType == "delay")
                 {
@@ -2468,6 +2478,133 @@ namespace Alexa.Utilities
         }
         #endregion
 
+        #region execute the "mousemove" type step
+        /// <summary>
+        /// Runs the method that insert text
+        /// </summary>
+        /// <param name="alexaStep">the xml node that contains the step</param>
+        private static void StepMouseMove(XmlNode alexaStep)
+        {
+
+            try
+            {
+                //Create a new StepTiming object, it will be used by OutputUtils to write
+                //current step info to the output file
+                OutputUtils.StepTiming stepTiming = new OutputUtils.StepTiming();
+
+                //save start date
+                stepTiming.startTime = DateTime.Now;
+
+                //create a stopwatch to mesea the elapsed time of this step
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+
+                int x = 0;
+                int y = 0;
+                int speed = 10;
+
+                x = Int32.Parse( alexaStep.Attributes["x"].Value);
+                y = Int32.Parse(alexaStep.Attributes["y"].Value);
+                speed = Int32.Parse(alexaStep.Attributes["speed"].Value);
+
+                _autoIt.MouseMove(x,y,speed);
+
+                stopWatch.Stop();
+
+                //save all info that will be used by OutputUtils to write current
+                //step info to the output file
+                stepTiming.stepNumber = _stepNumber;
+                stepTiming.stepNode = alexaStep;
+                stepTiming.endTime = DateTime.Now;
+                stepTiming.stepDuration = stopWatch.ElapsedMilliseconds;
+
+                //add above info to StepTimingsCollection
+                OutputUtils.StepTimingsCollection.Add(stepTiming);
+            }
+            catch (Exception ex)
+            {
+                //write the error
+                LogUtils.Write(ex);
+                Program.Finish(true);
+            }
+        }
+        #endregion
+
+        #region execute the "mouseclick" type step
+        /// <summary>
+        /// Runs the method that click the mouse
+        /// </summary>
+        /// <param name="alexaStep">the xml node that contains the step</param>
+        private static void StepMouseClick(XmlNode alexaStep)
+        {
+
+            try
+            {
+                //Create a new StepTiming object, it will be used by OutputUtils to write
+                //current step info to the output file
+                OutputUtils.StepTiming stepTiming = new OutputUtils.StepTiming();
+
+                //save start date
+                stepTiming.startTime = DateTime.Now;
+
+                //create a stopwatch to mesea the elapsed time of this step
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+
+                bool doubleClick = false;
+                bool rightClick = false;
+                int delay = 500;
+
+                if (alexaStep.Attributes["double.click"].Value == "enable")
+                {
+                    doubleClick = true;
+                }
+
+                if (alexaStep.Attributes["right.click"].Value == "enable")
+                {
+                    rightClick = true;
+                }
+
+                try
+                {
+                    delay = Int32.Parse(alexaStep.Attributes["double.click.delay"].Value);
+                }
+                catch { }
+
+                
+                if(rightClick == true)
+                {
+                    _autoIt.MouseClick("RIGHT");
+                }
+                else if(doubleClick)
+                {
+                    _autoIt.MouseClick("LEFT");
+                    Thread.Sleep(delay);
+                    _autoIt.MouseClick("LEFT");
+
+                }
+
+                stopWatch.Stop();
+
+                //save all info that will be used by OutputUtils to write current
+                //step info to the output file
+                stepTiming.stepNumber = _stepNumber;
+                stepTiming.stepNode = alexaStep;
+                stepTiming.endTime = DateTime.Now;
+                stepTiming.stepDuration = stopWatch.ElapsedMilliseconds;
+
+                //add above info to StepTimingsCollection
+                OutputUtils.StepTimingsCollection.Add(stepTiming);
+            }
+            catch (Exception ex)
+            {
+                //write the error
+                LogUtils.Write(ex);
+                Program.Finish(true);
+            }
+        }
+        #endregion
+
         #region execute the "delay" type step
         /// <summary>
         /// Runs the method that executes Delay
@@ -2539,7 +2676,7 @@ namespace Alexa.Utilities
                     //this is not a mandatory option
                     if (alexaStep.Attributes["IO.timing"].Value == "disable")
                         _performanceMouseKeyboardEnable = false;
-                    else if (alexaStep.Attributes["IO.timing"].Value == "yes")
+                    else if (alexaStep.Attributes["IO.timing"].Value == "enable")
                         _performanceMouseKeyboardEnable = true;
                 }
                 catch { _performanceMouseKeyboardEnable = true; }

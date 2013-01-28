@@ -586,34 +586,37 @@ namespace Alexa.Utilities
         {
             try
             {
-                foreach (XmlNode node in ConfigUtils.GetProgramsToRun)
+                if (ConfigUtils.GetProgramsToRun != null)
                 {
-
-                    //contains the full path (plus name) of the program that we have to run
-                    string executable = "";
-
-                    //contains the arguments of the program
-                    string arguments = "\"" + ConfigUtils.OutputFolder + "\"";
-
-                    //get the executable
-                    executable = node.SelectSingleNode("executable").InnerText;
-
-                    //get the arguments
-                    foreach (XmlNode argument in node.SelectNodes("argument"))
+                    foreach (XmlNode node in ConfigUtils.GetProgramsToRun)
                     {
-                        arguments = arguments + " " + argument.InnerText;
+
+                        //contains the full path (plus name) of the program that we have to run
+                        string executable = "";
+
+                        //contains the arguments of the program
+                        string arguments = "\"" + ConfigUtils.OutputFolder + "\"";
+
+                        //get the executable
+                        executable = node.SelectSingleNode("executable").InnerText;
+
+                        //get the arguments
+                        foreach (XmlNode argument in node.SelectNodes("argument"))
+                        {
+                            arguments = arguments + " " + argument.InnerText;
+                        }
+
+                        //create the process object
+                        Process p = new Process();
+                        p.StartInfo.UseShellExecute = false;
+
+                        //set the filename and the arguments
+                        p.StartInfo.FileName = executable;
+                        if (arguments != "") p.StartInfo.Arguments = arguments;
+
+                        //start the process
+                        p.Start();
                     }
-
-                    //create the process object
-                    Process p = new Process();
-                    p.StartInfo.UseShellExecute = false;
-
-                    //set the filename and the arguments
-                    p.StartInfo.FileName = executable;
-                    if (arguments != "") p.StartInfo.Arguments = arguments;
-
-                    //start the process
-                    p.Start();
                 }
             }
             catch(Exception ex)
