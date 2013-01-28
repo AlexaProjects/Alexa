@@ -1871,8 +1871,8 @@ namespace Alexa.Utilities
                         }
 
                         //get the coordinates of where we have to click
-                        mouseX = box.x + (box.width / 2);
-                        mouseY = box.y + (box.height / 2);
+                        mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                        mouseY = box.y + (box.height / 2) + _clickOffsetY;
                         Click(mouseX, mouseY);
                         _found = true;
                         //exit from the foreach loop
