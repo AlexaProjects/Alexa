@@ -335,6 +335,10 @@ namespace Alexa.Utilities
                 {
                     InsertText(alexaStep);
                 }
+                else if (stepType == "putclipboard")
+                {
+                    PutToClipboard(alexaStep);
+                }
                 //executes the step type "mousemove"
                 else if (stepType == "mousemove")
                 {
@@ -686,8 +690,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             ClickAndInsert(mouseX, mouseY, _textToInsert);
                             _found = true;
                             //exit from the foreach loop
@@ -752,8 +756,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             ClickAndInsert(mouseX, mouseY, _textToInsert);
                             _found = true;
                             //exit from the foreach loop
@@ -817,8 +821,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             ClickAndInsert(mouseX, mouseY, _textToInsert);
                             _found = true;
                             //exit from the foreach loop
@@ -872,8 +876,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             ClickAndInsert(mouseX, mouseY, _textToInsert);
                             _found = true;
                             //exit from the foreach loop
@@ -1080,8 +1084,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             SelectListItem(mouseX, mouseY, _selectItem);
                             _found = true;
                             //exit from the foreach loop
@@ -1146,8 +1150,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             SelectListItem (mouseX, mouseY, _selectItem);
                             _found = true;
                             //exit from the foreach loop
@@ -1211,8 +1215,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             SelectListItem(mouseX, mouseY, _selectItem);
                             _found = true;
                             //exit from the foreach loop
@@ -1266,8 +1270,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             SelectListItem(mouseX, mouseY, _selectItem);
                             _found = true;
                             //exit from the foreach loop
@@ -2069,8 +2073,8 @@ namespace Alexa.Utilities
                             }
 
                             //get the coordinates of where we have to click
-                            mouseX = box.x + (box.width / 2);
-                            mouseY = box.y + (box.height / 2);
+                            mouseX = box.x + (box.width / 2) + _clickOffsetX;
+                            mouseY = box.y + (box.height / 2) + _clickOffsetY;
                             #region debug message
                             //if we are in debug then write debug message
                             //if (_debugLogLevel) LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Debug, "insert text \"" + textToInsert + "\"");
@@ -2505,8 +2509,12 @@ namespace Alexa.Utilities
 
                 x = Int32.Parse( alexaStep.Attributes["x"].Value);
                 y = Int32.Parse(alexaStep.Attributes["y"].Value);
-                speed = Int32.Parse(alexaStep.Attributes["speed"].Value);
+                try
+                {
 
+                    speed = Int32.Parse(alexaStep.Attributes["speed"].Value);
+                }
+                catch { }
                 _autoIt.MouseMove(x,y,speed);
 
                 stopWatch.Stop();
@@ -2553,17 +2561,25 @@ namespace Alexa.Utilities
 
                 bool doubleClick = false;
                 bool rightClick = false;
-                int delay = 500;
+                int delay = 80;
 
-                if (alexaStep.Attributes["double.click"].Value == "enable")
+                try
                 {
-                    doubleClick = true;
+                    if (alexaStep.Attributes["double.click"].Value == "enable")
+                    {
+                        doubleClick = true;
+                    }
                 }
+                catch { }
 
-                if (alexaStep.Attributes["right.click"].Value == "enable")
+                try
                 {
-                    rightClick = true;
+                    if (alexaStep.Attributes["right.click"].Value == "enable")
+                    {
+                        rightClick = true;
+                    }
                 }
+                catch { }
 
                 try
                 {
@@ -2575,13 +2591,20 @@ namespace Alexa.Utilities
                 if(rightClick == true)
                 {
                     _autoIt.MouseClick("RIGHT");
+                    Thread.Sleep(_afterClickDelay);
                 }
-                else if(doubleClick)
+                else if (doubleClick)
                 {
                     _autoIt.MouseClick("LEFT");
                     Thread.Sleep(delay);
                     _autoIt.MouseClick("LEFT");
+                    Thread.Sleep(_afterClickDelay);
 
+                }
+                else
+                {
+                    _autoIt.MouseClick("LEFT");
+                    Thread.Sleep(_afterClickDelay);
                 }
 
                 stopWatch.Stop();
@@ -2689,6 +2712,28 @@ namespace Alexa.Utilities
                 catch{ }
             }
             catch(Exception ex)
+            {
+                //write the error
+                LogUtils.Write(ex);
+                Program.Finish(true);
+            }
+        }
+        #endregion
+
+        #region execute the "puttoclipboard" type step
+        /// <summary>
+        /// Runs the method that will copy text to clipBoard
+        /// </summary>
+        /// <param name="alexaStep">the xml node that contains the step</param>
+        private static void PutToClipboard(XmlNode alexaStep)
+        {
+
+            try
+            {
+                string text = alexaStep.SelectSingleNode("text").InnerText;
+                _autoIt.ClipPut(text);
+            }
+            catch (Exception ex)
             {
                 //write the error
                 LogUtils.Write(ex);

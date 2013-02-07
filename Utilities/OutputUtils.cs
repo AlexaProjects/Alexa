@@ -22,6 +22,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Alexa.Utilities
 {
@@ -289,7 +290,14 @@ namespace Alexa.Utilities
             //loop through all steps timings collection
             foreach (StepTiming stepTiming in StepTimingsCollection)
             {
+                //variable to enable the output
                 bool enableOutput = false;
+
+                //variable to enable the data source group
+                string groupName = "";
+                string groupName2 = "";
+                string groupName3 = "";
+                bool groupEnable = false;
 
                 try
                 {
@@ -299,7 +307,26 @@ namespace Alexa.Utilities
                 }
                 catch{}
 
-                if (enableOutput)
+                
+                try
+                {
+                    //check if we have to group the datasource
+                    groupName = stepTiming.stepNode.SelectSingleNode("performance").Attributes["group"].Value.ToLower();
+                    
+                    //check if we have to write the output of current step into the output file
+                    if (groupName != "")
+                    {
+                        groupName2 = ", group is " + groupName;
+                        groupName3 = " (group is " + groupName + ")";
+
+                        groupEnable = true;
+                    }
+                }
+                catch { }
+
+
+
+                if (enableOutput == true) //&& groupEnable == false)
                 {
                     //declare the step node (and its child node) that will be written to the output file
                     XmlElement step = outputFile.CreateElement("step");
@@ -317,20 +344,52 @@ namespace Alexa.Utilities
                     //set the step number
                     step.SetAttribute("number", stepTiming.stepNumber.ToString());
 
+
+                    string stepName = "";
+
                     try
                     {
                         //set the step name
-                        string stepName = stepTiming.stepNode.Attributes["name"].Value;
+                        stepName = stepTiming.stepNode.Attributes["name"].Value;
                         step.SetAttribute("name", stepName);
-
-                        //add the duration of current step to the nagios performance string
-                        nagiosPerformance = nagiosPerformance + " " + stepName + "=" + duration.ToString() + "ms";
                     }
                     catch
                     {
-                        //add the duration of current step to the nagios performance string
-                        nagiosPerformance = nagiosPerformance + " Step " + stepTiming.stepNumber.ToString() + "=" + duration.ToString() + "ms";
+                        stepName = stepTiming.stepNumber.ToString();
                     }
+
+
+                    if (groupEnable == false)
+                    {
+                        //add the duration of current step to the nagios performance string
+                        nagiosPerformance = nagiosPerformance + " " + stepName + "=" + duration.ToString() + "ms";
+                    }
+                    else
+                    {
+                        //get the duration of the group
+                        string durationOfGroupString = "";
+                        int durationOfGroup = 0;
+
+                        try
+                        {
+                            durationOfGroupString = Regex.Split(nagiosPerformance, groupName + "=")[1];
+                            durationOfGroupString = Regex.Split(durationOfGroupString, "ms")[0];
+
+                            durationOfGroup = Int32.Parse(durationOfGroupString);
+
+                            nagiosPerformance = nagiosPerformance.Replace(groupName + "=" + durationOfGroup, groupName + "=" + (duration + durationOfGroup).ToString());// + " " + groupName + "=" + (duration + durationOfGroup).ToString() + "ms";
+
+                        }
+                        catch //group data source is not present, so create it
+                        {
+                            //add the duration of current step to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + " " + groupName + "=" + duration.ToString() + "ms";
+                        }
+
+                    }
+
+
+
 
                     try
                     {
@@ -342,11 +401,11 @@ namespace Alexa.Utilities
                     //add current step to the OkStep Array
                     try
                     {
-                        OkStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                        OkStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
                     }
                     catch
                     {
-                        OkStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                        OkStep.Add("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
                     }
 
                     try
@@ -355,9 +414,19 @@ namespace Alexa.Utilities
                         long warningLevel = long.Parse(stepTiming.stepNode.SelectSingleNode("performance").Attributes["warning"].Value);
                         performance.SetAttribute("warning", warningLevel.ToString());
 
-                        //add warning threshold to the nagios performance string
-                        nagiosPerformance = nagiosPerformance + ";" + warningLevel.ToString();
-
+                        if (groupEnable == false)
+                        {
+                            //add warning threshold to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + ";" + warningLevel.ToString();
+                        }
+                        else
+                        {
+                            if (Regex.IsMatch(nagiosPerformance, groupName + "=.*;;;;") == false)
+                            {
+                                nagiosPerformance = nagiosPerformance + ";";
+                            }
+                        }
+                        
                         //check if the current step has exceeded the warning threshold
                         if (duration >= warningLevel)
                         {
@@ -367,15 +436,15 @@ namespace Alexa.Utilities
                             //add this step to the warning steps
                             try
                             {
-                                WarningStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                WarningStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
 
-                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
                             }
                             catch
                             {
-                                WarningStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                WarningStep.Add("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
 
-                                OkStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                OkStep.Remove("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
                             }
 
                             if (standardOutputExitCode <= 1)
@@ -398,8 +467,19 @@ namespace Alexa.Utilities
                         long errorLevel = long.Parse(stepTiming.stepNode.SelectSingleNode("performance").Attributes["critical"].Value);
                         performance.SetAttribute("critical", errorLevel.ToString());
 
-                        //add critical threshold to the nagios performance string
-                        nagiosPerformance = nagiosPerformance + ";" + errorLevel.ToString();
+                        if (groupEnable == false)
+                        {
+                            //add critical threshold to the nagios performance string
+                            nagiosPerformance = nagiosPerformance + ";" + errorLevel.ToString();
+                        }
+                        else
+                        {
+                            if (Regex.IsMatch(nagiosPerformance, groupName + "=.*;;;;") == false)
+                            {
+                                nagiosPerformance = nagiosPerformance + ";";
+                            }
+                        }
+
 
                         //check if the current step has exceeded the critical threshold
                         if (duration >= errorLevel)
@@ -410,17 +490,17 @@ namespace Alexa.Utilities
                             //add this step to the critical steps
                             try
                             {
-                                CriticalStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                CriticalStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
 
-                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
-                                WarningStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
                             }
                             catch
                             {
-                                CriticalStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                CriticalStep.Add("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
 
-                                OkStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
-                                WarningStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                OkStep.Remove("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
                             }
 
                             if (standardOutputExitCode <= 2)
@@ -446,61 +526,64 @@ namespace Alexa.Utilities
                         //check if the global step has exceeded the timeout value
                         if (duration >= timeout)
                         {
-
-                            if (ConfigUtils.OutputTimeoutHandler == 1)
+                            if (groupEnable == false)
                             {
-                                try
+                                if (ConfigUtils.OutputTimeoutHandler == 1)
                                 {
-                                    //set the step name
-                                    string stepName = stepTiming.stepNode.Attributes["name"].Value;
+                                    try
+                                    {
+                                        //set the step name
+                                        stepName = stepTiming.stepNode.Attributes["name"].Value;
 
-                                    nagiosPerformance = nagiosPerformance.Replace(
-                                        stepName + "=" + duration.ToString() + "ms",
-                                        stepName + "=0ms");
+                                        nagiosPerformance = nagiosPerformance.Replace(
+                                            stepName + "=" + duration.ToString() + "ms",
+                                            stepName + "=0ms");
+                                    }
+                                    catch
+                                    {
+                                        nagiosPerformance = nagiosPerformance.Replace(
+                                            "Step " + stepTiming.stepNumber.ToString() + "=" + duration.ToString() + "ms",
+                                            "Step " + stepTiming.stepNumber.ToString() + "=0ms");
+                                    }
                                 }
-                                catch
+                                else if (ConfigUtils.OutputTimeoutHandler == 2)
                                 {
-                                    nagiosPerformance = nagiosPerformance.Replace(
-                                        "Step " + stepTiming.stepNumber.ToString() + "=" + duration.ToString() + "ms",
-                                        "Step " + stepTiming.stepNumber.ToString() + "=0ms");
+                                    try
+                                    {
+                                        //set the step name
+                                        stepName = stepTiming.stepNode.Attributes["name"].Value;
+
+                                        nagiosPerformance = nagiosPerformance.Replace(
+                                            stepName + "=" + duration.ToString() + "ms",
+                                            stepName + "=ms");
+                                    }
+                                    catch
+                                    {
+                                        nagiosPerformance = nagiosPerformance.Replace(
+                                            "Step " + stepTiming.stepNumber.ToString() + "=" + duration.ToString() + "ms",
+                                            "Step " + stepTiming.stepNumber.ToString() + "=ms");
+                                    }
                                 }
                             }
-                            else if (ConfigUtils.OutputTimeoutHandler == 2)
-                            {
-                                try
-                                {
-                                    //set the step name
-                                    string stepName = stepTiming.stepNode.Attributes["name"].Value;
-
-                                    nagiosPerformance = nagiosPerformance.Replace(
-                                        stepName + "=" + duration.ToString() + "ms",
-                                        stepName + "=ms");
-                                }
-                                catch
-                                {
-                                    nagiosPerformance = nagiosPerformance.Replace(
-                                        "Step " + stepTiming.stepNumber.ToString() + "=" + duration.ToString() + "ms",
-                                        "Step " + stepTiming.stepNumber.ToString() + "=ms");
-                                }
-                            }
+                            
 
 
                             //add this step to the timeout steps
                             try
                             {
-                                TimeoutStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                TimeoutStep.Add(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
 
-                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
-                                CriticalStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
-                                WarningStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + ");" + performance.Attributes["duration"].Value);
+                                OkStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
+                                CriticalStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove(step.Attributes["name"].Value + " (step " + step.Attributes["number"].Value + groupName2 + ");" + performance.Attributes["duration"].Value);
                             }
                             catch
                             {
-                                TimeoutStep.Add("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                TimeoutStep.Add("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
 
-                                OkStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
-                                CriticalStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
-                                WarningStep.Remove("Step " + step.Attributes["number"].Value + ";" + performance.Attributes["duration"].Value);
+                                OkStep.Remove("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
+                                CriticalStep.Remove("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
+                                WarningStep.Remove("Step " + step.Attributes["number"].Value + groupName3 + ";" + performance.Attributes["duration"].Value);
                             }
 
                             //performance.SetAttribute("duration", duration.ToString());
@@ -516,7 +599,7 @@ namespace Alexa.Utilities
 
                     //we don't have a min or max value for the performance data.
                     //So we I to add two semicolon to avoid any kind of error on the graph
-                    nagiosPerformance = nagiosPerformance + ";;";
+                    if(groupEnable == false)nagiosPerformance = nagiosPerformance + ";;";
 
                     //put together step node and step child nodes
                     step.AppendChild(performance);
@@ -728,7 +811,8 @@ namespace Alexa.Utilities
                 outString = outString + unknownStepsString + ", ";
             }
 
-            outString = outString.Remove(outString.Length - 2);
+            if(standardOutputExitCode != 0) outString = outString.Remove(outString.Length - 2);
+
             //print to the console the message
             outString = outString + "|" + nagiosPerformance;
 
@@ -798,7 +882,7 @@ namespace Alexa.Utilities
             XmlElement nagiosExitCode = outputFile.CreateElement("exitcode");
 
             //set the values of the nagios nodes
-            nagiosMessage.InnerText = outString + "|" + nagiosPerformance + "\r\n" + detailString;
+            nagiosMessage.InnerText = outString + /*"|" + nagiosPerformance +*/ "\r\n" + detailString;
             nagiosExitCode.InnerText = standardOutputExitCode.ToString();
 
             //append nagios child nodes to nagios root node

@@ -147,6 +147,12 @@
             <param name="alexaStep">the xml node that contains the step</param>
             <returns>return true if the text was found</returns>
         </member>
+        <member name="M:Alexa.Utilities.CoreUtils.PutToClipboard(System.Xml.XmlNode)">
+            <summary>
+            Runs the method that will copy text to clipBoard
+            </summary>
+            <param name="alexaStep">the xml node that contains the step</param>
+        </member>
         <member name="M:Alexa.Utilities.CoreUtils.GetBindRegionPoints">
             <summary>
             Get the points of interest from the core source image

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <global>
-        <name>Alan Website Test Caseà</name>
+        <name>Alan Website Test Case</name>
         <description>Test Case for www.alan-pipitone.com</description>
         <home>C:\Alexa\TestCase\alan-pipitone</home>
         <performance output="yes" warning="300000" critical="400000" timeout.value="600000"/>
@@ -18,7 +18,7 @@
     </global>
     <steps>
         <step type="run" name="Open IE" description="Open Internet Explore with the url www.alan-pipitone.com" >
-            <performance output="yes" warning="5000" critical="10000" timeout.value="120000"/>
+            <performance output="yes" warning="5000" critical="10000" timeout.value="12000" timeout.action="break"/>
             <executable>"C:\Program Files\Internet Explorer\iexplore.exe"</executable>
             <argument>http://www.alan-pipitone.com/index.php/en/</argument>
             <window maximize="yes">(?i).*home.*(internet|fox)</window>
