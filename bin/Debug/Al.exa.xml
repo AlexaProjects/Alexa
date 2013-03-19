@@ -316,6 +316,12 @@
             </summary>
             <param name="regularExpression">The regular expression that is used to find the window</param>
         </member>
+        <member name="M:Alexa.Utilities.SystemUtils.User32.CloseWindowNew(System.String)">
+            <summary>
+            Close window
+            </summary>
+            <param name="regularExpression">The regular expression that is used to find the window</param>
+        </member>
         <member name="M:Alexa.Utilities.SystemUtils.User32.GetWindowHandle(System.String)">
             <summary>
             Gets the handle of the window.
@@ -535,9 +541,26 @@
             </summary>
             <returns>the run nodes</returns>
         </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetProcessesToKillAtStartTime">
+            <summary>
+            Get the process to kill before the execution of the steps
+            </summary>
+            <returns>the proccess node list</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetWindowsToCloseAtStartTime">
+            <summary>
+            Get the windows to close before the execution of the steps
+            </summary>
+            <returns>the proccess node list</returns>
+        </member>
         <member name="M:Alexa.Program.CheckTimeout">
             <summary>
             Checks the global timeout
+            </summary>
+        </member>
+        <member name="M:Alexa.Program.WarmUp">
+            <summary>
+            Execute the method that clean the desktop
             </summary>
         </member>
         <member name="M:Alexa.Program.Finish(System.Boolean)">

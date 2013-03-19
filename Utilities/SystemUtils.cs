@@ -288,6 +288,38 @@ namespace Alexa.Utilities
             }
 
             /// <summary>
+            /// Close window
+            /// </summary>
+            /// <param name="regularExpression">The regular expression that is used to find the window</param>
+            public static void CloseWindowNew(string regularExpression)
+            {
+                EnumDelegate enumDelegate = delegate(IntPtr hWnd, int lParam)
+                {
+                    try
+                    {
+                        StringBuilder strBuilderTitle = new StringBuilder(255);
+                        int nLength = GetWindowText(hWnd, strBuilderTitle, strBuilderTitle.Capacity + 1);
+                        string strTitle = strBuilderTitle.ToString();
+
+                        if (IsWindowVisible(hWnd) == true && string.IsNullOrEmpty(strTitle) == false)
+                        {
+                            // close the window using API        
+                            if (Regex.IsMatch(strTitle, regularExpression))
+                            {
+                                SendMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+                            }
+                        }
+                    }
+                    catch { }
+
+                    return true;
+
+                };
+
+                EnumDesktopWindows(IntPtr.Zero, enumDelegate, IntPtr.Zero);
+            }
+
+            /// <summary>
             /// Gets the handle of the window.
             /// </summary>
             /// <param name="regularExpression">The regular expression that is used to find the window</param>
@@ -359,8 +391,41 @@ namespace Alexa.Utilities
         public class ProcessUtils
         {
             //contains pid of all processes to kill after the execution of Al'exa
-            public static List<UInt32> processesToKill = new List<UInt32>(); 
+            public static List<UInt32> processesToKill = new List<UInt32>();
 
+            public static bool anotherAlexaInstance = false;
+
+            public static bool CheckAlexaInstances()
+            {
+                int alexaInstancesCnt = 0;
+                Process[] processlist = Process.GetProcesses();
+                
+                //string fileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+
+                //get the program name
+                System.Reflection.Assembly a = System.Reflection.Assembly.GetExecutingAssembly();
+                string programName = System.IO.Path.GetFileNameWithoutExtension(a.Location);
+ 
+                foreach(Process process in processlist)
+                {
+                    if (process.ProcessName.ToLower().IndexOf(programName.ToLower()) != -1)
+                    {
+                        alexaInstancesCnt++;
+                    }
+                }
+
+                if (alexaInstancesCnt >= 2)
+                {
+                    anotherAlexaInstance = true;
+                    return true;
+ 
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
 
             /// <summary>
             /// Get all processes that belong to specific user

@@ -53,9 +53,19 @@ namespace Alexa
         //cannot write any error message.
         static void Main(string[] args)
         {
-
             //init configuration utilities class
             ConfigUtils.Init(args[0]);
+
+            //init log utilities class
+            LogUtils.Init();
+
+            //check if another instance of Al'exa is running
+            if (SystemUtils.ProcessUtils.CheckAlexaInstances() == true)
+            {
+                Console.WriteLine("UNKNOWN: another instance of Al'exa is running");
+                LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Error, "Another instance of Al'exa is running");
+                Environment.Exit(3);
+            }
 
             //Hide current window calling windows API.
             //NB: To do this we can also set "Windows Application" on the output type property of Visual Studio.
@@ -66,6 +76,9 @@ namespace Alexa
             //get user name and user domain of the account used to run Al'exa
             userName = Environment.UserName;
             userDomain = Environment.UserDomainName;
+
+            //call the wormup
+            WarmUp();
 
             //get the regular expression containing the name of processes to kill
             _processToKillRegEx = ConfigUtils.ProcessesToKill;
@@ -92,9 +105,6 @@ namespace Alexa
 
             //start the thread
             _timeoutThread.Start();
-
-            //init log utilities class
-            LogUtils.Init();
 
             //init CryptoUtils
             CryptoUtils.Init();
@@ -123,6 +133,8 @@ namespace Alexa
                 //checks if a timeout has occurred
                 if (_globalTime.ElapsedMilliseconds > globalTimeout)
                 {
+                    LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Error, "global timeout has occurred");
+
                     //call the method that save the output and exit from the program
                     Program.Finish(false);
                     break;
@@ -130,6 +142,72 @@ namespace Alexa
 
                 Thread.Sleep(500);
             }
+        }
+
+        /// <summary>
+        /// Execute the method that clean the desktop
+        /// </summary>
+        public static void WarmUp()
+        {
+            //----------------------------------------------------------------------
+            //                       KILL THE PROCESSES
+            //----------------------------------------------------------------------
+            XmlNodeList processesToKill = ConfigUtils.GetProcessesToKillAtStartTime;
+
+            if (processesToKill != null)
+            {
+                foreach (XmlNode processToKill in processesToKill)
+                {
+                    try
+                    {
+                        string processUser = userName;
+                        string processDomain = userDomain;
+
+                        try
+                        {
+
+                            if (processToKill.Attributes["user"].Value.ToLower() != "current")
+                            {
+                                processUser = processToKill.Attributes["user"].Value.Split('\\')[1];
+                                processDomain = processToKill.Attributes["user"].Value.Split('\\')[0];
+                            }
+                        }
+                        catch { }
+
+                        List<uint> processes = SystemUtils.ProcessUtils.GetUserProcessesByRegEx(processDomain, processUser, processToKill.InnerText);
+
+                        foreach (UInt32 pidToKill in processes)
+                        {
+                            SystemUtils.ProcessUtils.KillProcess(pidToKill);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+
+                    }
+                }
+            }
+
+            //----------------------------------------------------------------------
+            //                       CLOSE THE WINDOWS
+            //----------------------------------------------------------------------
+            XmlNodeList windowsToClose = ConfigUtils.GetWindowsToCloseAtStartTime;
+
+            if (windowsToClose != null)
+            {
+                foreach (XmlNode windowToClose in windowsToClose)
+                {
+                    try
+                    {
+                        SystemUtils.User32.CloseWindowNew(windowToClose.InnerText);
+                    }
+                    catch
+                    {
+                    }
+                }
+
+            }
+            
         }
 
         /// <summary>

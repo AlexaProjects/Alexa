@@ -3842,8 +3842,8 @@ namespace Alexa.Utilities
 
 
             //if the window is not maximized then try to maximize it using the mouse
-            if (windowProperties.Height <= SystemUtils.ScreenHeight - 50 || windowProperties.Width <= SystemUtils.ScreenWidth - 50 
-                || windowProperties.X > 100 || windowProperties.Y > 100)
+            if ((windowProperties.Height <= SystemUtils.ScreenHeight - 50 || windowProperties.Width <= SystemUtils.ScreenWidth - 50 
+                || windowProperties.X > 100 || windowProperties.Y > 100) && windowProperties.X > 0)
             {
                 _autoIt.MouseClick("left",windowProperties.X + windowProperties.Width - 50, windowProperties.Y + 15);
             }  

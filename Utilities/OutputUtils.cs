@@ -355,7 +355,7 @@ namespace Alexa.Utilities
                     }
                     catch
                     {
-                        stepName = stepTiming.stepNumber.ToString();
+                        stepName = "Step " + stepTiming.stepNumber.ToString();
                     }
 
 
@@ -786,7 +786,8 @@ namespace Alexa.Utilities
 
             if (exception == true)
             {
-                outString = "An internal exception has occurred. Some steps may not have been executed. Please read the Al'exa.log file";
+                outString = "An internal exception has occurred. Some steps may not have been executed. Please read the Al'exa.log file, ";
+
                 standardOutputExitCode = 3;
             }
 

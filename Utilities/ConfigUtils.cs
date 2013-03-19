@@ -296,5 +296,43 @@ namespace Alexa.Utilities
                 }
             }
         }
+
+        /// <summary>
+        /// Get the process to kill before the execution of the steps
+        /// </summary>
+        /// <returns>the proccess node list</returns>
+        static public XmlNodeList GetProcessesToKillAtStartTime
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("wormup").SelectNodes("process.kill");
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the windows to close before the execution of the steps
+        /// </summary>
+        /// <returns>the proccess node list</returns>
+        static public XmlNodeList GetWindowsToCloseAtStartTime
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("wormup").SelectNodes("window.close");
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
     }
 }
