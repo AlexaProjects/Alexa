@@ -64,6 +64,9 @@ namespace Alexa.Utilities
 
             bool enableGlobalOutput = false;
 
+            bool globalTimeoutOccurred = false;
+            int globalTimeoutExitCode = 3;
+
             //contains the message to send into the standard output
             string outString = "all steps are ok";
 
@@ -256,6 +259,9 @@ namespace Alexa.Utilities
                             //check if user has set different exit code for the timeout
                             globalExitcode.InnerText = Global.xmlNode.SelectSingleNode("performance").Attributes["timeout.exitcode"].Value;
                             standardOutputExitCode = Int32.Parse(globalExitcode.InnerText);
+
+                            globalTimeoutOccurred = true;
+                            globalTimeoutExitCode = standardOutputExitCode;
                         }
                         catch
                         {
@@ -654,6 +660,8 @@ namespace Alexa.Utilities
                     if (enableOutput)
                     {
                         //standardOutputExitCode = 3;
+
+                        if(globalTimeoutOccurred == true) standardOutputExitCode = globalTimeoutExitCode;
 
                         //declare the step node (and its child node) that will be written to the output file
                         XmlElement step = outputFile.CreateElement("step");
