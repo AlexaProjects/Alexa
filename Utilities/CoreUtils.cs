@@ -3119,6 +3119,7 @@ namespace Alexa.Utilities
                             Regex.IsMatch(textInImage.Replace("I", "|"), inputString) || Regex.IsMatch(textInImage.Replace("|", "I"), inputString) ||
                             Regex.IsMatch(textInImage.Replace("t", "|"), inputString) || Regex.IsMatch(textInImage.Replace("|", "t"), inputString) ||
                             Regex.IsMatch(textInImage.Replace("i", "|"), inputString) || Regex.IsMatch(textInImage.Replace("|", "i"), inputString) ||
+                            Regex.IsMatch(textInImage.Replace("M", "II"), inputString) || Regex.IsMatch(textInImage.Replace("II", "M"), inputString) ||
                             Regex.IsMatch(textInImage.Replace("ni", "m"), inputString) || Regex.IsMatch(textInImage.Replace("m", "ni"), inputString))
                         {
 

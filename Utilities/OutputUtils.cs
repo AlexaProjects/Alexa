@@ -251,6 +251,16 @@ namespace Alexa.Utilities
                         //set the standard output exit code
                         standardOutputExitCode = 3;
 
+                        try
+                        {
+                            //check if user has set different exit code for the timeout
+                            globalExitcode.InnerText = Global.xmlNode.SelectSingleNode("performance").Attributes["timeout.exitcode"].Value;
+                            standardOutputExitCode = Int32.Parse(globalExitcode.InnerText);
+                        }
+                        catch
+                        {
+                        }
+
                         //add this step to the unknown steps
                         try
                         {
@@ -593,6 +603,16 @@ namespace Alexa.Utilities
 
                             //set the standard output exit code
                             standardOutputExitCode = 3;
+
+                            try
+                            {
+                                //check if user has set different exit code for the timeout
+                                exitcode.InnerText = stepTiming.stepNode.SelectSingleNode("performance").Attributes["timeout.exitcode"].Value;
+                                standardOutputExitCode = Int32.Parse(exitcode.InnerText);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                     catch { }
@@ -633,7 +653,7 @@ namespace Alexa.Utilities
 
                     if (enableOutput)
                     {
-                        standardOutputExitCode = 3;
+                        //standardOutputExitCode = 3;
 
                         //declare the step node (and its child node) that will be written to the output file
                         XmlElement step = outputFile.CreateElement("step");
