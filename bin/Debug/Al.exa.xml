@@ -267,6 +267,11 @@
             Runs external script
             </summary>
         </member>
+        <member name="M:Alexa.Utilities.SystemUtils.SendEmail">
+            <summary>
+            Send the e-mail with the errors
+            </summary>
+        </member>
         <member name="P:Alexa.Utilities.SystemUtils.ScreenHeight">
             <summary>
             Get the Height of screen resolution
@@ -392,6 +397,21 @@
             </summary>
             <param name="pid">The process pid</param>
         </member>
+        <member name="T:Alexa.Utilities.SystemUtils.NetworkShare">
+            <summary>
+            provides access to a network share
+            </summary>
+        </member>
+        <member name="M:Alexa.Utilities.SystemUtils.NetworkShare.Connect(System.String,System.String,System.String)">
+            <summary>
+            Connect to the share
+            </summary>
+        </member>
+        <member name="M:Alexa.Utilities.SystemUtils.NetworkShare.Disconnect">
+            <summary>
+            Disconnect from share
+            </summary>
+        </member>
         <member name="T:Alexa.Utilities.ScreenUtils">
             <summary>
             Provides functions to capture single windows or the entire desktop.
@@ -481,6 +501,18 @@
             </summary>
             <returns>The log folder</returns>
         </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.LogFolderUserName">
+            <summary>
+            Get the Log folder user name
+            </summary>
+            <returns>The log user name</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.LogFolderPassword">
+            <summary>
+            Get the Log folder user password
+            </summary>
+            <returns>The log user password</returns>
+        </member>
         <member name="P:Alexa.Utilities.ConfigUtils.AlexaSteps">
             <summary>
             Get the steps of the test case
@@ -552,6 +584,66 @@
             Get the windows to close before the execution of the steps
             </summary>
             <returns>the proccess node list</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpServer">
+            <summary>
+            Get the smtp server
+            </summary>
+            <returns>the smtp server</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpPort">
+            <summary>
+            Get the smtp port
+            </summary>
+            <returns>the smtp port</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpFromAddress">
+            <summary>
+            Get the smtp "from" address
+            </summary>
+            <returns>the smtp server</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpToAddresses">
+            <summary>
+            Get the smtp "to" address(es)
+            </summary>
+            <returns>the smtp server</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpUser">
+            <summary>
+            Get the username for smtp server
+            </summary>
+            <returns>the username for smtp server</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpPassword">
+            <summary>
+            Get the password for smtp server
+            </summary>
+            <returns>the password for smtp server</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpImageQuality">
+            <summary>
+            Get the Image Quality for the attachment of smtp
+            </summary>
+            <returns>the Image Quality for the attachment of smtp</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpImageSizeFactor">
+            <summary>
+            Get the Image resize factor for the attachment of smtp
+            </summary>
+            <returns>the Image resize factor for the attachment of smtp</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpTimeout">
+            <summary>
+            Get Smtp Timeout
+            </summary>
+            <returns>Smtp timeout</returns>
+        </member>
+        <member name="P:Alexa.Utilities.ConfigUtils.GetSmtpExe">
+            <summary>
+            Get the Image Quality for the attachment of smtp
+            </summary>
+            <returns>the Image Quality for the attachment of smtp</returns>
         </member>
         <member name="M:Alexa.Program.CheckTimeout">
             <summary>

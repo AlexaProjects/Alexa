@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <StartArguments>"C:\Alexa\TestCase\alan-pipitone\log\run_13_04_2013_14.46.10\Error_Screenshots" "mail.alan-pipitoxne.com" "587" "oscar@alan-pipitone.com" "mem2000@inwind.it;a-l-a-n@hotmail.it" "ATTENTION: Alan Website Test Case has some problems" "Please see the attached screenshot for more information. Don't reply to this e-mail." "oscar@alan-pipitone.com" "DKilrs5lIDdfLwjjINN3Zp"</StartArguments>
+  </PropertyGroup>
+</Project>

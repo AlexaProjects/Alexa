@@ -28,11 +28,20 @@ using System.Threading;
 using System.Windows.Automation;
 using System.Windows.Forms;
 using System.Xml;
+using System.Net;
+using System.Net.Mail;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
+using System.ComponentModel;
 
 namespace Alexa.Utilities
 {
     class SystemUtils
     {
+        public static string MailStdOutput = "";
+
+
         public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
 
         /// <summary>
@@ -598,6 +607,7 @@ namespace Alexa.Utilities
         }
 
 
+
         /// <summary>
         /// Set folder compression
         /// </summary>
@@ -605,17 +615,20 @@ namespace Alexa.Utilities
         /// <param name="compress">set true to compress the folder</param>
         public static void SetDirectoryCompression(DirectoryInfo path, Boolean compress)
         {
-            if (Directory.Exists(path.FullName)) //check if the path exist
+            if (path.FullName.IndexOf("\\") == -1)
             {
-                //set the ManagementObject
-                using (ManagementObject dir = new ManagementObject("Win32_Directory.Name=\"" + path.FullName.Replace(@"\", @"\\") + "\""))
+                if (Directory.Exists(path.FullName)) //check if the path exist
                 {
-                    if (compress == true)
-                        //compress the folder
-                        dir.InvokeMethod("Compress", null, null);
-                    else
-                        //uncompress the folder
-                        dir.InvokeMethod("Uncompress", null, null);
+                    //set the ManagementObject
+                    using (ManagementObject dir = new ManagementObject("Win32_Directory.Name=\"" + path.FullName.Replace(@"\", @"\\") + "\""))
+                    {
+                        if (compress == true)
+                            //compress the folder
+                            dir.InvokeMethod("Compress", null, null);
+                        else
+                            //uncompress the folder
+                            dir.InvokeMethod("Uncompress", null, null);
+                    }
                 }
             }
         }
@@ -688,6 +701,283 @@ namespace Alexa.Utilities
             {
                 //write the exception
                 LogUtils.Write(ex);
+            }
+        }
+
+
+        /// <summary>
+        /// Send the e-mail with the errors
+        /// </summary>
+        public static void SendEmail()
+        {
+            try
+            {
+
+                if (ConfigUtils.GetSmtpServer != null)
+                {
+                    //get the path with the error screenshot(s)
+                    string ErrorScreenFolder = Path.Combine(ConfigUtils.LogFolder, "Error_Screenshots");
+
+                    //change the quality of the screenshots
+                    VaryQualityLevel(ErrorScreenFolder);
+
+                    //set subject and body message
+                    string Subject = "ATTENTION: " + ConfigUtils.Global.SelectSingleNode("name").InnerText + " has some problems";
+                    string Body = "Please see the attached screenshot for more information. Don't reply to this e-mail.";
+
+                    //create the process object (we have to send the e-mail with an external executable, otherwise some antivirus could generate problems)
+                    Process p = new Process();
+
+                    p.StartInfo.RedirectStandardOutput = true;
+                    p.StartInfo.RedirectStandardError = true;
+                    //don't use the shell
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                    //set the filename and the arguments
+                    p.StartInfo.FileName = ConfigUtils.GetSmtpExe;
+
+                    MailStdOutput = "";
+
+                    //set our event handler to asynchronously read the standard output.
+                    p.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
+                    
+                    //set the arguments
+                    string arguments = "\"" + ErrorScreenFolder + "\" \"" + ConfigUtils.GetSmtpServer + "\" \"" + ConfigUtils.GetSmtpPort + "\" \"" + ConfigUtils.GetSmtpFromAddress
+                        + "\" \"";
+
+                    foreach (XmlNode to in ConfigUtils.GetSmtpToAddresses)
+                    {
+                        arguments = arguments + to.InnerText + ";";
+                    }
+
+                    arguments = arguments.Remove(arguments.LastIndexOf(";")) + "\" \"" + Subject + "\" \"" + Body + "\" \"";
+
+
+                    if (ConfigUtils.GetSmtpUser != null && ConfigUtils.GetSmtpUser != "" && ConfigUtils.GetSmtpPassword != null && ConfigUtils.GetSmtpPassword != "")
+                    {
+                        arguments = arguments + ConfigUtils.GetSmtpUser + "\" \"" + ConfigUtils.GetSmtpPassword + "\"";
+                    }
+                    else
+                    {
+                        arguments = arguments + "none\" \"none\"";
+                    }
+
+                    
+                    p.StartInfo.Arguments = arguments;
+
+                    //start the process
+                    p.Start();
+                    p.BeginOutputReadLine();
+
+
+                    //check if timeout has passed
+                    if (!p.WaitForExit(ConfigUtils.GetSmtpTimeout))
+                    {
+                        try
+                        {
+                            p.Kill();
+                        }
+                        catch
+                        {
+                        }
+
+                    }
+
+
+                    if (MailStdOutput != "")
+                    {
+                        LogUtils.Write(new StackFrame(0, true), LogUtils.ErrorLevel.Error, MailStdOutput);
+                    }
+
+                    //stop to read standard output and error output
+                    p.CancelOutputRead();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //write the exception
+                LogUtils.Write(ex);
+            }
+        }
+
+        //our event handler method to asynchronously read the standard output.
+        private static void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        {
+            //save the standard output
+            if (!String.IsNullOrEmpty(outLine.Data))
+            {
+                MailStdOutput = MailStdOutput + outLine.Data;
+            }
+        }
+
+        private static void VaryQualityLevel(string path)
+        {
+
+            // Put all file names in root directory into array.
+            string[] array1 = Directory.GetFiles(path);
+
+            foreach (string name in array1)
+            {
+                try
+                {
+                    // Get a bitmap.
+                    Bitmap bmp1 = new Bitmap(name);
+
+                    float resizeFactor = ConfigUtils.GetSmtpImageSizeFactor;
+
+                    if (resizeFactor != -1)
+                    {
+                        int newWidth = (int)(bmp1.Width * resizeFactor);
+                        int newHeight = (int)(bmp1.Height * resizeFactor);
+
+                        Image newImage = new Bitmap(newWidth, newHeight);
+                        using (Graphics graphics = Graphics.FromImage(newImage))
+                        {
+                            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            graphics.DrawImage(bmp1, 0, 0, newWidth, newHeight);
+                        }
+
+                        bmp1 = (Bitmap)newImage;
+                    }
+
+                    ImageCodecInfo jgpEncoder = GetEncoder(ImageFormat.Jpeg);
+
+                    // Create an Encoder object based on the GUID
+                    // for the Quality parameter category.
+                    System.Drawing.Imaging.Encoder myEncoder =
+                        System.Drawing.Imaging.Encoder.Quality;
+
+                    // Create an EncoderParameters object.
+                    // An EncoderParameters object has an array of EncoderParameter
+                    // objects. In this case, there is only one
+                    // EncoderParameter object in the array.
+                    EncoderParameters myEncoderParameters = new EncoderParameters(1);
+
+                    EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder,
+                        Int64.Parse(ConfigUtils.GetSmtpImageQuality.Replace("%","")));
+
+                    myEncoderParameters.Param[0] = myEncoderParameter;
+                    bmp1.Save(name.Replace(".bmp", ".jpg"), jgpEncoder,
+                        myEncoderParameters);
+                }
+                catch
+                {
+                }
+                
+            }
+
+        }
+
+
+
+        private static ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
+        }
+
+
+        /// <summary>
+        /// provides access to a network share
+        /// </summary>
+        public static class NetworkShare
+        {
+            private const int CONNECT_INTERACTIVE = 0x00000008;
+            private const int CONNECT_PROMPT = 0x00000010;
+            private const int CONNECT_REDIRECT = 0x00000080;
+            private const int CONNECT_UPDATE_PROFILE = 0x00000001;
+            private const int CONNECT_COMMANDLINE = 0x00000800;
+            private const int CONNECT_CMD_SAVECRED = 0x00001000;
+            private const int CONNECT_LOCALDRIVE = 0x00000100;
+
+            private const int RESOURCE_CONNECTED = 0x00000001;
+            private const int RESOURCE_GLOBALNET = 0x00000002;
+            private const int RESOURCE_REMEMBERED = 0x00000003;
+
+            private const int RESOURCETYPE_ANY = 0x00000000;
+            private const int RESOURCETYPE_DISK = 0x00000001;
+            private const int RESOURCETYPE_PRINT = 0x00000002;
+
+
+            private const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
+            private const int RESOURCEUSAGE_CONTAINER = 0x00000002;
+
+            private const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
+            private const int RESOURCEDISPLAYTYPE_DOMAIN = 0x00000001;
+            private const int RESOURCEDISPLAYTYPE_SERVER = 0x00000002;
+            private const int RESOURCEDISPLAYTYPE_SHARE = 0x00000003;
+            private const int RESOURCEDISPLAYTYPE_FILE = 0x00000004;
+            private const int RESOURCEDISPLAYTYPE_GROUP = 0x00000005;
+
+            private static string _remoteShare = "";
+
+
+            [DllImport("Mpr.dll")]
+            private static extern int WNetUseConnection(IntPtr hwndOwner, NETRESOURCE lpNetResource, string lpPassword, string lpUserID,
+                int dwFlags, string lpAccessName, string lpBufferSize, string lpResult
+                );
+
+            [DllImport("Mpr.dll")]
+            private static extern int WNetCancelConnection2(string lpName, int dwFlags, bool fForce);
+
+            [StructLayout(LayoutKind.Sequential)]
+            private class NETRESOURCE
+            {
+                public int dwScope = 0;
+                public int dwType = 0;
+                public int dwDisplayType = 0;
+                public int dwUsage = 0;
+                public string lpLocalName = "";
+                public string lpRemoteName = "";
+                public string lpComment = "";
+                public string lpProvider = "";
+            }
+
+
+            /// <summary>
+            /// Connect to the share
+            /// </summary>
+            public static void Connect(string remoteShare, string username, string password)
+            {
+                _remoteShare = remoteShare.Split('\\')[2];
+                _remoteShare = @"\\" + _remoteShare;
+
+                NETRESOURCE netRes = new NETRESOURCE
+                {
+                    dwType = RESOURCETYPE_DISK,
+                    lpRemoteName = _remoteShare
+                };
+
+                int result = WNetUseConnection(IntPtr.Zero, netRes, password, username, 0, null, null, null);
+
+                if (result != 0)
+                {
+                    throw new Win32Exception(result);
+                }
+            }
+
+            /// <summary>
+            /// Disconnect from share
+            /// </summary>
+            public static void Disconnect()
+            {
+                int result = WNetCancelConnection2(_remoteShare, CONNECT_UPDATE_PROFILE, false);
+                if (result != 0)
+                {
+                    throw new Win32Exception(result);
+                }
             }
         }
     }

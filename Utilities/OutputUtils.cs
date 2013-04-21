@@ -933,8 +933,19 @@ namespace Alexa.Utilities
                 outputFile.Save(Path.Combine(ConfigUtils.OutputFolder, "output.xml"));
             }
 
+            //send the e-mail
+            SystemUtils.SendEmail();
+
             //run external scripts
             SystemUtils.RunExternalScript();
+
+            //if the username (and other attributes) for the share is set...
+            if (ConfigUtils.LogFolderUserName != "" && ConfigUtils.LogFolderPassword != "" && ConfigUtils.LogFolder.IndexOf(@"\\") != -1)
+            {
+                //...Disconnect from remote share
+                SystemUtils.NetworkShare.Disconnect();
+            }
+
 
             //exit with current exit code
             Environment.Exit(standardOutputExitCode);

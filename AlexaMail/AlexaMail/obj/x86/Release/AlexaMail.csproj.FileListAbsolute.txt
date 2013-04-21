@@ -1,0 +1,5 @@
+C:\work\GitHubRepos\Alexa\Alexa\AlexaMail\AlexaMail\bin\Release\AlexaMail.exe
+C:\work\GitHubRepos\Alexa\Alexa\AlexaMail\AlexaMail\bin\Release\AlexaMail.pdb
+C:\work\GitHubRepos\Alexa\Alexa\AlexaMail\AlexaMail\obj\x86\Release\ResolveAssemblyReference.cache
+C:\work\GitHubRepos\Alexa\Alexa\AlexaMail\AlexaMail\obj\x86\Release\AlexaMail.exe
+C:\work\GitHubRepos\Alexa\Alexa\AlexaMail\AlexaMail\obj\x86\Release\AlexaMail.pdb

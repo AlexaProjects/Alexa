@@ -56,6 +56,16 @@ namespace Alexa
             //init configuration utilities class
             ConfigUtils.Init(args[0]);
 
+            //init CryptoUtils
+            CryptoUtils.Init();
+
+            //if the username (and other attributes) for the share is set...
+            if (ConfigUtils.LogFolderUserName != "" && ConfigUtils.LogFolderPassword != "" && ConfigUtils.LogFolder.IndexOf(@"\\") != -1)
+            {
+                //...call the share connect function
+                SystemUtils.NetworkShare.Connect(ConfigUtils.LogFolder, ConfigUtils.LogFolderUserName, ConfigUtils.LogFolderPassword);
+            }
+
             //init log utilities class
             LogUtils.Init();
 
@@ -79,6 +89,7 @@ namespace Alexa
 
             //call the wormup
             WarmUp();
+
 
             //get the regular expression containing the name of processes to kill
             _processToKillRegEx = ConfigUtils.ProcessesToKill;
@@ -105,9 +116,6 @@ namespace Alexa
 
             //start the thread
             _timeoutThread.Start();
-
-            //init CryptoUtils
-            CryptoUtils.Init();
 
             //init Core utilities class
             CoreUtils.Init();

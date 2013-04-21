@@ -112,6 +112,55 @@ namespace Alexa.Utilities
         }
 
         /// <summary>
+        /// Get the Log folder user name
+        /// </summary>
+        /// <returns>The log user name</returns>
+        static public string LogFolderUserName
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("log/folder").Attributes["username"].Value;
+                }
+                catch 
+                {
+                    return "";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the Log folder user password
+        /// </summary>
+        /// <returns>The log user password</returns>
+        static public string LogFolderPassword
+        {
+            get
+            {
+                try
+                {
+                    string nodeText = Global.SelectSingleNode("log/folder").Attributes["password"].Value;
+                    string plainText = "";
+
+                    //try to decrypt the text
+                    plainText = CryptoUtils.DecryptString(nodeText);
+
+                    //if plainText is null then the text isn't crypted
+                    if (plainText == null) plainText = nodeText;
+                    
+                    return plainText;
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+        }
+
+
+
+        /// <summary>
         /// Get the steps of the test case
         /// </summary>
         /// <returns>The steps</returns>
@@ -327,6 +376,205 @@ namespace Alexa.Utilities
                 try
                 {
                     return Global.SelectSingleNode("wormup").SelectNodes("window.close");
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the smtp server
+        /// </summary>
+        /// <returns>the smtp server</returns>
+        static public String GetSmtpServer
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("smtp/host").InnerText ;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the smtp port
+        /// </summary>
+        /// <returns>the smtp port</returns>
+        static public int GetSmtpPort
+        {
+            get
+            {
+                try
+                {
+                    return Int32.Parse(Global.SelectSingleNode("smtp/port").InnerText);
+                }
+                catch
+                {
+                    return 25;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the smtp "from" address
+        /// </summary>
+        /// <returns>the smtp server</returns>
+        static public string GetSmtpFromAddress
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("smtp/from").InnerText;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the smtp "to" address(es)
+        /// </summary>
+        /// <returns>the smtp server</returns>
+        static public XmlNodeList GetSmtpToAddresses
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectNodes("smtp/to");
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the username for smtp server
+        /// </summary>
+        /// <returns>the username for smtp server</returns>
+        static public string GetSmtpUser
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("smtp/username").InnerText;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the password for smtp server
+        /// </summary>
+        /// <returns>the password for smtp server</returns>
+        static public string GetSmtpPassword
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("smtp/password").InnerText;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the Image Quality for the attachment of smtp
+        /// </summary>
+        /// <returns>the Image Quality for the attachment of smtp</returns>
+        static public string GetSmtpImageQuality
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("smtp/attachment.quality").InnerText;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the Image resize factor for the attachment of smtp
+        /// </summary>
+        /// <returns>the Image resize factor for the attachment of smtp</returns>
+        static public float GetSmtpImageSizeFactor
+        {
+            get
+            {
+                try
+                {
+                    return float.Parse(Global.SelectSingleNode("smtp/attachment.resize").InnerText.Replace("%", "")) / 100;
+                }
+                catch
+                {
+                    return -1;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get Smtp Timeout
+        /// </summary>
+        /// <returns>Smtp timeout</returns>
+        static public int GetSmtpTimeout
+        {
+            get
+            {
+                try
+                {
+                    return Int32.Parse(Global.SelectSingleNode("smtp/timeout").InnerText);
+                }
+                catch
+                {
+                    return 10000;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Get the Image Quality for the attachment of smtp
+        /// </summary>
+        /// <returns>the Image Quality for the attachment of smtp</returns>
+        static public string GetSmtpExe
+        {
+            get
+            {
+                try
+                {
+                    return Global.SelectSingleNode("smtp/smtp.tool").InnerText;
                 }
                 catch
                 {

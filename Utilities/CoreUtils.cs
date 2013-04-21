@@ -23,6 +23,7 @@ using System.Xml;
 using System.Collections;
 using AutoItX3Lib;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using OCR.TesseractWrapper;
@@ -42,6 +43,9 @@ namespace Alexa.Utilities
     /// </summary>
     static public class CoreUtils
     {
+        //check if we have to send an e-mail
+        static public bool sendEmail = false;
+
         #region private variables
 
         #region variables for debug
@@ -3797,12 +3801,35 @@ namespace Alexa.Utilities
         {
             if (ConfigUtils.LogIsEnabled == true)
             {
+                sendEmail = true;
+
                 DirectoryInfo dir = new DirectoryInfo(Path.Combine(_debugHomeFolder, @"..\Error_Screenshots"));
                 if (!Directory.Exists(dir.FullName)) dir.Create();
                 Bitmap desktopScreen;
                 //capture desktop image
                 desktopScreen = ScreenUtils.CaptureDesktop();
-                desktopScreen.Save(dir + "\\step_" + RemoveIllegalChars(GetStepNameNumber(alexaStep)).Replace(" ", "_") + ".bmp");
+                
+                //--
+                var newImage = new Bitmap(desktopScreen.Width, desktopScreen.Height + 50);
+
+                var gr = Graphics.FromImage(newImage);
+                gr.FillRectangle(new SolidBrush(Color.Black), 0, 0, desktopScreen.Width, desktopScreen.Height + 50);
+
+                gr.DrawImageUnscaled(desktopScreen, 0, 50);
+
+                Font TextFont = new Font("Tahoma", 15);
+                SolidBrush TextBrush = new SolidBrush(Color.GreenYellow);
+
+                gr.TextRenderingHint = TextRenderingHint.AntiAlias;
+                gr.DrawString("Step number " + _stepNumber + ". Step name: " + RemoveIllegalChars(GetStepNameNumber(alexaStep)), TextFont, TextBrush,
+                    new RectangleF(15,12, desktopScreen.Width, 50));
+
+                newImage.Save(dir + "\\" + _stepNumber + ".bmp");
+                newImage.Dispose();
+                gr.Dispose();
+                //--
+
+                //desktopScreen.Save(dir + "\\step_" + RemoveIllegalChars(GetStepNameNumber(alexaStep)).Replace(" ", "_") + ".bmp");
                 desktopScreen.Dispose();
             }
         }
