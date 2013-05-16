@@ -29,7 +29,7 @@
         </step>
         <step type="interact" bind="word" rectbound.color="(255,255,255)">
             <performance output="yes" timeout.value="12000"/>
-            <text>(?i)apple.*mac</text>
+            <text>(?i)apple</text>
         </step>
         <step type="interact" bind="genericbox" height="43" width="260" tollerance="10" mouse.click="off" mouse.move="off">
             <performance output="yes" timeout.value="7000"/>

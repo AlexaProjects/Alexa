@@ -35,7 +35,7 @@
             <window title="(?i).*(internet|fox)" >
                 <tab title="(?i)home" binarize="yes" />
             </window>
-            <text>(?i)apple.*mac</text>
+            <text>(?i)apple</text>
         </step>
         <step type="interact" bind="genericbox" name="Popular" description="Check if Popular tab appears" height="43" width="260" tollerance="10" mouse.click="off" mouse.move="off">
             <performance output="yes" warning="5000" critical="10000" timeout.value="12000" timeout.action="break"/>
