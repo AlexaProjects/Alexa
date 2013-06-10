@@ -99,7 +99,8 @@ namespace Alexa.Utilities
             InteractButton = 4,
             InteractIconList = 5,
             InteractText = 6,
-            InteractDropDownList = 7
+            InteractDropDownList = 7,
+            Wait = 8
         }
 
         //this enum contains the definition for all Type of Action
@@ -334,6 +335,11 @@ namespace Alexa.Utilities
                 {
                     ExecStepMethod(StepType.RunExe, alexaStep);
                 }
+                //executes the step type "run"
+                else if (stepType == "wait")
+                {
+                    ExecStepMethod(StepType.Wait, alexaStep);
+                }
                 //executes the step type "digit"
                 else if(stepType == "insert")
                 {
@@ -558,6 +564,87 @@ namespace Alexa.Utilities
             return false;
         }
         #endregion
+
+
+        #region executes the "Wait" type step
+        /// <summary>
+        /// Runs the method that wait process or window
+        /// </summary>
+        /// <param name="alexaStep">the xml node that contains the step</param>
+        /// <returns>return true if the executables was execute</returns>
+        private static bool StepWait(XmlNode alexaStep)
+        {
+            try
+            {
+                //contains the processname
+                string processName = "";
+
+                string windowRegEx = "";
+
+                try
+                {
+                    processName = alexaStep.SelectSingleNode("process").InnerText;
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    windowRegEx = alexaStep.SelectSingleNode("window").InnerText;
+                }
+                catch
+                {
+                }
+
+                //if windowRegEx is not empty then we have to wait the window
+                if (windowRegEx != "")
+                {
+                    IntPtr handle;
+
+                    //check if the window has appeared
+                    if (SystemUtils.User32.GetWindow(windowRegEx, out handle) == true)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    string userName = Environment.UserName;
+                    string userDomain = Environment.UserDomainName;
+
+                    //check for process
+                    List<UInt32> processes = SystemUtils.ProcessUtils.GetUserProcessesByName(userDomain, userName, processName);
+
+                    if (processes.Count() > 0)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                //write the error
+                LogUtils.Write(ex);
+                Program.Finish(true);
+            }
+
+            //if we are here then we have to return false
+            return false;
+        }
+        #endregion
+
 
         #region execute the "interact" type step on an inputbox
         /// <summary>
@@ -3638,7 +3725,8 @@ namespace Alexa.Utilities
                     stepType == StepType.InteractButton && StepInteractButton() == true ||
                     stepType == StepType.InteractIconList && StepInteractIconListItem() == true ||
                     stepType == StepType.InteractText && StepInteractText() == true ||
-                    stepType == StepType.InteractDropDownList && StepInteractDropDownList() == true)
+                    stepType == StepType.InteractDropDownList && StepInteractDropDownList() == true ||
+                    stepType == StepType.Wait && StepWait(alexaStep) == true)
                 {
 
                     if (_enableScroll)

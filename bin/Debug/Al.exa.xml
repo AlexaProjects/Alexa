@@ -73,6 +73,13 @@
             <param name="alexaStep">the xml node that contains the step</param>
             <returns>return true if the executables was execute</returns>
         </member>
+        <member name="M:Alexa.Utilities.CoreUtils.StepWait(System.Xml.XmlNode)">
+            <summary>
+            Runs the method that wait process or window
+            </summary>
+            <param name="alexaStep">the xml node that contains the step</param>
+            <returns>return true if the executables was execute</returns>
+        </member>
         <member name="M:Alexa.Utilities.CoreUtils.StepInteractInputBox">
             <summary>
             Runs the method that does a click type step on an input box
